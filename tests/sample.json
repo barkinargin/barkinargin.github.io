@@ -1,0 +1,124 @@
+{
+ "feeds": {
+  "ai": [
+   {
+    "title": "Anthropic opens at $111.50 in record Nasdaq debut",
+    "url": "https://www.cnbc.com/a",
+    "summary": "teaser text",
+    "published": "2026-11-19T18:07:53.958810+00:00",
+    "source": "CNBC"
+   },
+   {
+    "title": "Nvidia revenue doubles under interim CEO",
+    "url": "https://techcrunch.com/b",
+    "summary": "teaser text",
+    "published": "2026-11-19T18:07:53.958810+00:00",
+    "source": "TechCrunch AI"
+   },
+   {
+    "title": "Nvidia revenue doubles under interim CEO",
+    "url": "https://verge.com/dup",
+    "summary": "teaser text",
+    "published": "2026-11-19T18:07:53.958810+00:00",
+    "source": "The Verge AI"
+   }
+  ],
+  "finance": [
+   {
+    "title": "S&P 500 falls for fifth straight day",
+    "url": "https://www.cnbc.com/c",
+    "summary": "teaser text",
+    "published": "2026-11-19T18:07:53.958810+00:00",
+    "source": "CNBC Markets"
+   }
+  ],
+  "football": [
+   {
+    "title": "Galatasaray host Samsunspor as Süper Lig returns",
+    "url": "https://dailysabah.com/d",
+    "summary": "teaser text",
+    "published": "2026-11-19T18:07:53.958810+00:00",
+    "source": "Daily Sabah Football"
+   }
+  ],
+  "nfl": [
+   {
+    "title": "Texans host Colts on Thursday night",
+    "url": "https://espn.com/e",
+    "summary": "teaser text",
+    "published": "2026-11-19T18:07:53.958810+00:00",
+    "source": "ESPN NFL"
+   }
+  ],
+  "tennis": []
+ },
+ "scores": [
+  {
+   "league": "NFL",
+   "home": "Cowboys",
+   "away": "49ers",
+   "home_score": "40",
+   "away_score": "46",
+   "home_won": false,
+   "away_won": true,
+   "state": "post",
+   "detail": "Final",
+   "start_pt": "Sun 1:25 PM",
+   "start_iso": ""
+  },
+  {
+   "league": "NFL",
+   "home": "Texans",
+   "away": "Colts",
+   "home_score": null,
+   "away_score": null,
+   "home_won": false,
+   "away_won": false,
+   "state": "pre",
+   "detail": "",
+   "start_pt": "Thu 5:15 PM",
+   "start_iso": ""
+  },
+  {
+   "league": "Süper Lig",
+   "home": "Galatasaray",
+   "away": "Samsunspor",
+   "home_score": null,
+   "away_score": null,
+   "home_won": false,
+   "away_won": false,
+   "state": "pre",
+   "detail": "",
+   "start_pt": "Sat 2:00 AM",
+   "start_iso": ""
+  },
+  {
+   "league": "Premier League",
+   "home": "Newcastle",
+   "away": "Arsenal",
+   "home_score": "0",
+   "away_score": "2",
+   "home_won": false,
+   "away_won": true,
+   "state": "post",
+   "detail": "FT",
+   "start_pt": "",
+   "start_iso": ""
+  }
+ ],
+ "quotes": [
+  {
+   "name": "S&P 500",
+   "symbol": "^GSPC",
+   "price": 7323.63,
+   "pct": -0.23
+  },
+  {
+   "name": "10-yr yield",
+   "symbol": "^TNX",
+   "price": 4.41,
+   "pct": 0.5
+  }
+ ],
+ "errors": []
+}
