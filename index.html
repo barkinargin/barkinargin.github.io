@@ -4,86 +4,212 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>barkinargin</title>
-<meta name="description" content="Projects by barkinargin, including The Morning Dispatch.">
+<meta name="description" content="Projects by barkinargin: The Morning Dispatch, Dispatch Sport, and a Bay Area parking app in progress.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=VT323&display=swap" rel="stylesheet">
 <style>
-/* Layout: one narrow column. Name and intro, a numbered project list, then contact. */
+/* Layout: a full-width panorama (Istanbul | London | Los Angeles) with a phone rising out of the middle.
+   The phone's home screen holds the projects as app icons. Below: a plain list of the same projects. */
 :root {
-  --paper: #f2f3f0; --ink: #15181d; --muted: #5a616c; --rule: #cdd1d6; --accent: #1d47c9; --card: #ffffff;
+  --hero: #eef0f2; --steel: #5b616b; --graphite: #2a2e35; --glow: #8a9099; --ink: #1b1e23;
+  --paper: #f2f3f0; --text: #15181d; --muted: #5a616c; --rule: #cdd1d6; --accent: #1d47c9;
   --display: "Newsreader", Georgia, serif;
   --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --paper: #111317; --ink: #e8eaed; --muted: #9aa1ac; --rule: #2c3038; --accent: #7d9cff; --card: #181b21; color-scheme: dark; }
+  :root:not([data-theme="light"]) { --paper: #0d1016; --text: #e8eaed; --muted: #9aa1ac; --rule: #262b33; --accent: #7d9cff; color-scheme: dark; }
 }
-:root[data-theme="dark"] { --paper: #111317; --ink: #e8eaed; --muted: #9aa1ac; --rule: #2c3038; --accent: #7d9cff; --card: #181b21; color-scheme: dark; }
+:root[data-theme="dark"] { --paper: #0d1016; --text: #e8eaed; --muted: #9aa1ac; --rule: #262b33; --accent: #7d9cff; color-scheme: dark; }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
 a { color: inherit; }
-a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.wrap { max-width: 720px; margin: 0 auto; padding: 72px 20px 64px; display: grid; gap: 56px; }
-h1 { font-family: var(--display); font-weight: 700; font-size: clamp(40px, 8vw, 60px); line-height: 1.02; margin: 0 0 14px; letter-spacing: -0.015em; text-wrap: balance; }
-.intro { font-size: 19px; color: var(--muted); max-width: 52ch; margin: 0; }
-.label { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 8px; margin: 0 0 4px; }
+a:focus-visible { outline: 3px solid #1b1e23; outline-offset: 4px; border-radius: 22px; }
+
+/* ---------------- hero ---------------- */
+.hero { position: relative; overflow: hidden; background: var(--hero); color: var(--ink);
+  height: clamp(640px, 94svh, 940px); isolation: isolate; }
+.hero .city { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; z-index: -3; }
+.hero::before { /* film grain */
+  content: ""; position: absolute; inset: 0; z-index: -2; opacity: 0.08; mix-blend-mode: multiply; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.hero::after { /* mist the phone rises out of */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 26%; z-index: 2; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(242,243,240,0), rgba(242,243,240,0.9) 55%, #f2f3f0);
+}
+.topbar { position: absolute; top: 0; left: 0; right: 0; z-index: 3; display: flex; justify-content: space-between; align-items: baseline;
+  padding: 22px clamp(16px, 4vw, 40px); font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; }
+.topbar .name { font-family: var(--display); font-size: 22px; letter-spacing: 0; font-weight: 700; }
+.topbar nav { display: flex; gap: 20px; }
+.topbar a { text-decoration: none; opacity: 0.85; }
+.topbar a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+
+/* ---------------- phone ---------------- */
+.phone { position: absolute; left: 50%; bottom: -70px; transform: translateX(-50%); z-index: 1;
+  width: clamp(270px, 25vw, 360px); aspect-ratio: 9 / 18.5; border-radius: 54px; padding: 12px;
+  background: linear-gradient(145deg, #e3e5e8 0%, #a7acb3 38%, #6d727a 62%, #c9ccd1 100%);
+  box-shadow: 0 50px 120px rgba(40,45,55,0.35), 0 8px 24px rgba(40,45,55,0.18), inset 0 0 0 1.5px rgba(255,255,255,0.7);
+  animation: rise 1.5s cubic-bezier(.16,1,.3,1) 0.15s both; }
+@keyframes rise { from { transform: translate(-50%, 70%); opacity: 0; } 30% { opacity: 1; } to { transform: translate(-50%, 0); opacity: 1; } }
+.screen { position: relative; height: 100%; border-radius: 43px; overflow: hidden; padding: 16px 22px;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,0.95), transparent 60%),
+    linear-gradient(180deg, #f6f7f8 0%, #e6e8eb 50%, #d2d5da 100%); }
+.status { display: flex; justify-content: space-between; align-items: center; font-family: var(--body); font-weight: 600; font-size: 14px; padding: 2px 8px 0; }
+.island { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 34%; height: 28px; border-radius: 20px; background: #000; }
+.status .sig { display: flex; gap: 2px; align-items: flex-end; }
+.status .sig i { width: 3px; background: var(--ink); border-radius: 1px; }
+.screen { color: var(--ink); }
+.greet { margin: 34px 4px 22px; }
+.greet .day { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.8; }
+.greet .big { font-family: var(--display); font-size: clamp(26px, 2.6vw, 34px); line-height: 1.05; font-weight: 700; margin-top: 2px; }
+
+.apps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px 18px; perspective: 600px; }
+.app { display: grid; justify-items: center; gap: 7px; text-decoration: none; color: var(--ink);
+  animation: pop 600ms cubic-bezier(.34,1.56,.64,1) both; }
+.apps li:nth-child(1) .app { animation-delay: 1.15s; } .apps li:nth-child(2) .app { animation-delay: 1.25s; }
+.apps li:nth-child(3) .app { animation-delay: 1.35s; } .apps li:nth-child(4) .app { animation-delay: 1.45s; }
+@keyframes pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+.app .icon { width: clamp(70px, 6.6vw, 92px); aspect-ratio: 1; border-radius: 24%; display: grid; place-items: center; position: relative; overflow: hidden;
+  box-shadow: 0 6px 14px rgba(40,45,55,0.18); transform: translateZ(0);
+  transition: transform 260ms cubic-bezier(.34,1.56,.64,1), box-shadow 260ms ease; }
+.app .label { font-size: 12.5px; font-weight: 500; color: var(--graphite); }
+a.app:hover .icon, a.app:focus-visible .icon { transform: translateY(-12px) translateZ(70px) scale(1.12);
+  box-shadow: 0 28px 40px rgba(40,45,55,0.35), 0 0 0 1.5px rgba(255,255,255,0.9); }
+a.app:active .icon { transform: translateY(-6px) translateZ(30px) scale(1.04); }
+a.app:focus-visible { outline: none; }
+
+/* icon art */
+.i-dispatch { background: #ffffff; color: #15181d; }
+.i-dispatch b { font-family: var(--display); font-weight: 700; font-size: 46%; }
+.i-dispatch b { font-size: clamp(34px, 3.2vw, 46px); line-height: 1; transform: translateY(-6%); }
+.i-dispatch .lines { position: absolute; left: 18%; right: 18%; bottom: 16%; display: grid; gap: 3px; }
+.i-dispatch .lines i { height: 3px; background: #15181d; opacity: 0.75; }
+.i-dispatch .lines i:nth-child(2) { width: 70%; opacity: 0.45; }
+.i-dispatch::before { content: ""; position: absolute; top: 12%; left: 18%; right: 18%; border-top: 3px double #15181d; }
+
+.i-sport { background: #000; color: #ff0; font-family: "VT323", ui-monospace, monospace; }
+.i-sport span { font-size: clamp(22px, 2vw, 28px); transform: translateY(-14%); }
+.i-sport .bars { position: absolute; left: 12%; right: 12%; bottom: 13%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+.i-sport .bars i { height: 8px; }
+
+.i-parking { background: linear-gradient(160deg, #3a3f47, #1b1e23); }
+.i-parking .sign { width: 54%; aspect-ratio: 1; border: 4px solid #fff; border-radius: 22%; display: grid; place-items: center;
+  font-family: var(--body); font-weight: 600; font-size: clamp(24px, 2.2vw, 32px); color: #fff; }
+.i-parking .dot { position: absolute; top: 14%; right: 14%; width: 14%; aspect-ratio: 1; border-radius: 50%; background: #3be38a; box-shadow: 0 0 0 3px rgba(59,227,138,0.3); }
+
+.i-soon { background: rgba(255,255,255,0.55); border: 2px dashed rgba(91,97,107,0.45); box-shadow: none; color: var(--steel); }
+.i-soon span { font-size: 32px; font-weight: 300; opacity: 0.85; }
+.app.soon .label { opacity: 0.7; }
+
+.dock-hint { position: absolute; left: 0; right: 0; bottom: 92px; text-align: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; opacity: 0.7; }
+
+/* ---------------- below the fold ---------------- */
+.wrap { max-width: 760px; margin: 0 auto; padding: 72px 20px 64px; display: grid; gap: 56px; }
+.label-h { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 8px; margin: 0 0 4px; font-weight: 500; }
 .projects { display: grid; }
 .project { display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 16px; padding: 20px 0; border-bottom: 1px solid var(--rule); text-decoration: none; }
 .project .no { font-family: var(--mono); color: var(--muted); font-size: 14px; padding-top: 4px; }
-.project h2 { font-family: var(--display); font-size: 26px; margin: 0; line-height: 1.15; }
+.project h3 { font-family: var(--display); font-size: 26px; margin: 0; line-height: 1.15; }
 .project p { margin: 4px 0 0; color: var(--muted); max-width: 54ch; }
 .project .tag { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; padding-top: 6px; }
-.project .status { font-family: var(--mono); font-size: 12px; color: var(--accent); }
-a.project:hover h2 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
-.project.soon { opacity: 0.75; }
+.project .status-t { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+a.project:hover h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .contact { display: flex; flex-wrap: wrap; gap: 10px 24px; }
 footer { font-size: 13px; color: var(--muted); }
-@media (max-width: 520px) { .project { grid-template-columns: 36px 1fr; } .project .tag { grid-column: 2; padding-top: 0; } }
+
+@media (max-width: 640px) {
+  .hero { height: clamp(640px, 100svh, 820px); }
+  .phone { width: min(78vw, 320px); bottom: -90px; }
+  .topbar nav { display: none; }
+  .project { grid-template-columns: 36px 1fr; }
+  .project .tag { grid-column: 2; padding-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .phone, .app { animation: none; }
+  .app .icon { transition: none; }
+  a.app:hover .icon, a.app:focus-visible .icon { transform: none; }
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>barkinargin</h1>
-  </header>
 
+<header class="hero">
+  <img class="city" src="/assets/skyline.svg" alt="Illustrated skyline: the Bosphorus Bridge in Istanbul, Big Ben and the London Eye, and downtown Los Angeles">
+  <div class="topbar">
+    <span class="name">barkinargin</span>
+    <nav aria-label="Main"><a href="/dispatch/">Dispatch</a><a href="/sport/">Sport</a><a href="#work">All projects</a></nav>
+  </div>
+
+  <div class="phone">
+    <div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="status" aria-hidden="true">
+        <span id="time">9:41</span>
+        <span class="sig"><i style="height:5px"></i><i style="height:8px"></i><i style="height:11px"></i><i style="height:14px"></i></span>
+      </div>
+      <div class="greet">
+        <div class="day" id="day">İstanbul · London · LA</div>
+        <div class="big">Things I'm building</div>
+      </div>
+      <ul class="apps">
+        <li><a class="app" href="/dispatch/">
+          <span class="icon i-dispatch" aria-hidden="true"><b>D</b><span class="lines"><i></i><i></i></span></span>
+          <span class="label">Dispatch</span></a></li>
+        <li><a class="app" href="/sport/">
+          <span class="icon i-sport" aria-hidden="true"><span>P300</span><span class="bars"><i style="background:#ff3b30"></i><i style="background:#00f000"></i><i style="background:#ff0"></i><i style="background:#0ff"></i></span></span>
+          <span class="label">Sport</span></a></li>
+        <li><a class="app" href="/parking/">
+          <span class="icon i-parking" aria-hidden="true"><span class="sign">P</span><span class="dot"></span></span>
+          <span class="label">Parking</span></a></li>
+        <li><span class="app soon" aria-label="Coming soon">
+          <span class="icon i-soon" aria-hidden="true"><span>+</span></span>
+          <span class="label">Coming soon</span></span></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
   <section aria-labelledby="work">
-    <h2 class="label" id="work">Things I've built</h2>
+    <h2 class="label-h" id="work">Things I've built</h2>
     <div class="projects">
       <a class="project" href="/dispatch/">
         <span class="no">01</span>
         <div>
-          <h2>The Morning Dispatch</h2>
-          <p>A daily front page for AI &amp; tech and finance, rebuilt automatically every morning from news feeds and live scores.</p>
-          <span class="status">Live · new edition daily</span>
+          <h3>The Morning Dispatch</h3>
+          <p>A daily front page for AI &amp; tech and finance, rebuilt automatically every morning from news feeds and market data.</p>
+          <span class="status-t">Live · new edition daily</span>
         </div>
         <span class="tag">Python · GitHub Actions · Claude</span>
       </a>
       <a class="project" href="/sport/">
         <span class="no">02</span>
         <div>
-          <h2>Dispatch Sport</h2>
+          <h3>Dispatch Sport</h3>
           <p>Süper Lig, European football, NFL and tennis on a teletext screen: page numbers, block graphics and the coloured buttons, with live tables and scores.</p>
-          <span class="status">Live · updated daily</span>
+          <span class="status-t">Live · updated daily</span>
         </div>
         <span class="tag">ESPN data · Teletext</span>
       </a>
-      <div class="project soon">
+      <a class="project" href="/parking/">
         <span class="no">03</span>
         <div>
-          <h2>Find Me a Parking Spot</h2>
+          <h3>Find Me a Parking Spot</h3>
           <p>A block-by-block map of how likely you are to find street parking in the Bay Area, starting with one neighborhood.</p>
-          <span class="status">In progress</span>
+          <span class="status-t">In progress</span>
         </div>
         <span class="tag">Data · Maps</span>
-      </div>
+      </a>
     </div>
   </section>
 
   <section aria-labelledby="contact">
-    <h2 class="label" id="contact">Get in touch</h2>
+    <h2 class="label-h" id="contact">Get in touch</h2>
     <div class="contact">
       <a href="https://github.com/barkinargin">GitHub</a>
     </div>
@@ -91,5 +217,17 @@ footer { font-size: 13px; color: var(--muted); }
 
   <footer>Built with Claude. Hosted on GitHub Pages.</footer>
 </div>
+
+<script>
+(function () {
+  var t = document.getElementById("time");
+  function tick() {
+    try {
+      t.textContent = new Date().toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles", hour: "numeric", minute: "2-digit" }).replace(/\s?[AP]M/, "");
+    } catch (e) {}
+  }
+  tick(); setInterval(tick, 15000);
+})();
+</script>
 </body>
 </html>
