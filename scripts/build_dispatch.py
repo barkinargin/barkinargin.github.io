@@ -167,7 +167,11 @@ def read_feed(source: str, url: str) -> list[dict]:
 def read_scoreboard(label: str, path: str) -> list[dict]:
     today = dt.datetime.now(PT).date()
     window = f"{(today - dt.timedelta(days=4)):%Y%m%d}-{(today + dt.timedelta(days=7)):%Y%m%d}"
-    data = json.loads(fetch(f"{ESPN}/{path}/scoreboard?dates={window}&limit=300"))
+    try:  # a date window adds recent results; fall back to ESPN's default view if it's refused
+        data = json.loads(fetch(f"{ESPN}/{path}/scoreboard?dates={window}"))
+    except Exception as e:  # noqa: BLE001
+        log(f"{label}: date window refused ({e}), using default scoreboard")
+        data = json.loads(fetch(f"{ESPN}/{path}/scoreboard"))
     games = []
     for ev in data.get("events", []):
         comp = (ev.get("competitions") or [{}])[0]

@@ -148,7 +148,7 @@ def render_teletext(ed: dict, raw: dict, now: dt.datetime) -> str:
     # Big European stories first; drop clearly off-topic ones (MLS, lower English leagues) when there's enough else.
     def eu_rank(i: dict) -> int:
         text = i["headline"] + " " + i.get("summary", "")
-        return 0 if BIG_EUROPE.search(text) else (2 if OFF_TOPIC.search(text) else 1)
+        return 2 if OFF_TOPIC.search(text) else (0 if BIG_EUROPE.search(text) else 1)
     eu_items.sort(key=eu_rank)
     if sum(eu_rank(i) < 2 for i in eu_items) >= 2:
         eu_items = [i for i in eu_items if eu_rank(i) < 2]
