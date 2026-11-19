@@ -176,9 +176,11 @@ def read_scoreboard(label: str, path: str) -> list[dict]:
 
 
 def read_quote(name: str, symbol: str) -> dict:
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.request.quote(symbol)}?range=5d&interval=1d"
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.request.quote(symbol)}?range=1d&interval=1d"
     meta = json.loads(fetch(url))["chart"]["result"][0]["meta"]
-    price, prev = meta["regularMarketPrice"], meta.get("chartPreviousClose") or meta.get("previousClose")
+    # With range=1d, chartPreviousClose is the previous session's close.
+    price = meta["regularMarketPrice"]
+    prev = meta.get("previousClose") or meta.get("chartPreviousClose")
     pct = (price - prev) / prev * 100 if prev else 0.0
     return {"name": name, "symbol": symbol, "price": price, "pct": pct}
 
@@ -279,7 +281,12 @@ def headlines_only(raw: dict) -> dict:
     """Edition built without Claude: newest headlines per desk, deduplicated."""
     def pick(desk: str, n: int) -> list[dict]:
         seen, out = set(), []
-        items = sorted(raw["feeds"].get(desk, []), key=lambda i: i["published"] or "", reverse=True)
+        # Newest first within each source, then take turns between sources so no feed crowds out the rest.
+        by_source: dict[str, list[dict]] = {}
+        for i in raw["feeds"].get(desk, []):
+            by_source.setdefault(i["source"], []).append(i)
+        queues = [sorted(v, key=lambda i: i["published"] or "", reverse=True) for v in by_source.values()]
+        items = [q[k] for k in range(max(map(len, queues), default=0)) for q in queues if k < len(q)]
         for i in items:
             k = re.sub(r"\W+", "", i["title"].lower())[:60]
             if k in seen:
