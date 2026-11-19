@@ -26,10 +26,13 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from teletext import render_teletext
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / "dispatch"
 STATE_FILE = OUT_DIR / "state.json"
 TEMPLATE = ROOT / "scripts" / "template.html"
+SPORT_DIR = ROOT / "sport"
 PT = ZoneInfo("America/Los_Angeles")
 UA = "Mozilla/5.0 (compatible; MorningDispatch/1.0; +https://github.com)"
 
@@ -72,6 +75,7 @@ SCOREBOARDS = [
     ("Champions League", "soccer/uefa.champions", "football"),
     ("Europa League", "soccer/uefa.europa", "football"),
 ]
+TABLES = [("Süper Lig", "soccer/tur.1"), ("Premier League", "soccer/eng.1")]
 QUOTES = [("S&P 500", "^GSPC"), ("Dow", "^DJI"), ("Nasdaq", "^IXIC"), ("10-yr yield", "^TNX")]
 
 MAX_PER_FEED = 8
@@ -175,6 +179,27 @@ def read_scoreboard(label: str, path: str) -> list[dict]:
     return games
 
 
+def read_standings(path: str) -> list[dict]:
+    data = json.loads(fetch(f"https://site.api.espn.com/apis/v2/sports/{path}/standings"))
+    groups = data.get("children") or [data]
+    entries = (groups[0].get("standings") or {}).get("entries", [])
+    rows = []
+    for e in entries:
+        st = {x.get("name"): x.get("value") for x in e.get("stats", [])}
+        team = e.get("team", {})
+        rows.append({
+            "team": team.get("shortDisplayName") or team.get("displayName", "?"),
+            "p": int(st.get("gamesPlayed") or 0), "w": int(st.get("wins") or 0),
+            "d": int(st.get("ties") or 0), "l": int(st.get("losses") or 0),
+            "gd": int(st.get("pointDifferential") or 0), "pts": int(st.get("points") or 0),
+            "rank": int(st.get("rank") or 0),
+        })
+    rows.sort(key=lambda r: (r["rank"] or 99, -r["pts"], -r["gd"]))
+    for n, r in enumerate(rows, 1):
+        r["pos"] = n
+    return rows
+
+
 def read_quote(name: str, symbol: str) -> dict:
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.request.quote(symbol)}?range=1d&interval=1d"
     meta = json.loads(fetch(url))["chart"]["result"][0]["meta"]
@@ -186,7 +211,7 @@ def read_quote(name: str, symbol: str) -> dict:
 
 
 def collect() -> dict:
-    raw = {"feeds": {}, "scores": [], "quotes": [], "errors": []}
+    raw = {"feeds": {}, "scores": [], "tables": {}, "quotes": [], "errors": []}
     for desk, feeds in FEEDS.items():
         raw["feeds"][desk] = []
         for source, url in feeds:
@@ -199,6 +224,11 @@ def collect() -> dict:
             raw["scores"] += read_scoreboard(label, path)
         except Exception as e:  # noqa: BLE001
             raw["errors"].append(f"{label} scores: {e}")
+    for label, path in TABLES:
+        try:
+            raw["tables"][label] = read_standings(path)
+        except Exception as e:  # noqa: BLE001
+            raw["errors"].append(f"{label} table: {e}")
     for name, symbol in QUOTES:
         try:
             raw["quotes"].append(read_quote(name, symbol))
@@ -219,7 +249,7 @@ Write today's edition as JSON with exactly this shape:
             "facts": [["label", "value"], ...], "sources": [{{"name": "...", "url": "..."}}]}},
   "ai": [item, ...],          // 3-4 items: frontier labs, big tech, chips, major funding, AI policy
   "finance": [item, ...],     // 3 items: the market move and why, a notable mover, what to watch
-  "football": [item, ...],    // 1-3 items: Türkiye clubs and national team first, then Europe's top leagues and the Champions League
+  "football": [item, ...],    // 2-6 items: up to 3 about Turkish clubs or the Türkiye national team, then Europe's top leagues and the Champions League
   "nfl": [item, ...],         // 1-2 items
   "tennis": [item, ...]       // 0-1 items, only for a big event (Grand Slam, ATP/WTA Finals, Masters 1000, Davis Cup)
 }}
@@ -298,7 +328,7 @@ def headlines_only(raw: dict) -> dict:
         return out
 
     return {"lead": None, "ai": pick("ai", 6), "finance": pick("finance", 5),
-            "football": pick("football", 4), "nfl": pick("nfl", 3), "tennis": pick("tennis", 2)}
+            "football": pick("football", 8), "nfl": pick("nfl", 3), "tennis": pick("tennis", 2)}
 
 
 # ---------------------------------------------------------------- render
@@ -393,7 +423,6 @@ def render(ed: dict, raw: dict, now: dt.datetime, edition_no: int, mode: str) ->
         "{{TICKER}}": render_ticker(raw["quotes"]),
         "{{LEAD}}": render_lead(ed.get("lead")),
         "{{AI}}": desk(ed.get("ai", [])),
-        "{{SPORTS}}": render_sports(ed, raw["scores"]),
         "{{FINANCE}}": desk(ed.get("finance", [])),
         "{{BUILT}}": now.strftime("%-I:%M %p PT, %a %b %-d"),
         "{{MODE}}": "Summaries written by Claude from the linked sources." if mode == "claude"
@@ -422,6 +451,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fixture", help="use saved raw material instead of fetching (for testing)")
     ap.add_argument("--save-raw", help="also save the fetched material to this path")
+    ap.add_argument("--only", choices=["all", "sports"], default="all", help="sports = rebuild only the sport pages")
     args = ap.parse_args()
 
     now = dt.datetime.now(PT)
@@ -437,6 +467,12 @@ def main() -> None:
     today = now.date().isoformat()
     if state["last_date"] != today:
         state = {"edition": state["edition"] + 1, "last_date": today}
+
+    SPORT_DIR.mkdir(exist_ok=True)
+    (SPORT_DIR / "index.html").write_text(render_teletext(ed, raw, now), encoding="utf-8")
+    if args.only == "sports":
+        log(f"Sport pages rebuilt ({mode}): {len(raw['scores'])} games, {len(raw.get('tables', {}))} tables.")
+        return
 
     page = render(ed, raw, now, state["edition"], mode)
     OUT_DIR.mkdir(exist_ok=True)

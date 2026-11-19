@@ -6,7 +6,7 @@
 <title>The Morning Dispatch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=VT323&display=swap" rel="stylesheet">
 <style>
 /* Layout: a broadsheet front page. Masthead, market ticker, one lead story, then three desk columns that stack on phones. */
 :root {
@@ -72,7 +72,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .fact span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
 
 /* Desks */
-.desks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; padding-top: 22px; }
+.desks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; padding-top: 22px; }
 .desk { padding: 0 22px; border-right: 1px solid var(--rule); display: grid; gap: 18px; align-content: start; }
 .desk:first-child { padding-left: 0; }
 .desk:last-child { border-right: 0; padding-right: 0; }
@@ -104,6 +104,8 @@ footer { margin-top: 36px; border-top: 3px double var(--ink); padding-top: 14px;
 .topnav { display: flex; justify-content: space-between; font-size: 13px; padding-top: 14px; color: var(--muted); }
 .topnav a { color: var(--muted); text-decoration: none; }
 .archive { list-style: none; padding: 0; display: grid; gap: 10px; font-family: var(--display); font-size: 20px; }
+.navr { display: flex; gap: 18px; }
+.ttx-link { font-family: "VT323", ui-monospace, monospace; font-size: 17px; background: #000; color: #ff0 !important; padding: 0 8px; }
 .topnav a:hover { text-decoration: underline; }
 
 @media (max-width: 900px) {
@@ -120,13 +122,13 @@ footer { margin-top: 36px; border-top: 3px double var(--ink); padding-top: 14px;
 </head>
 <body>
 <div class="wrap">
-<nav class="topnav"><a href="/">← Home</a><a href="/dispatch/archive/">Past editions</a></nav>
+<nav class="topnav"><a href="/">← Home</a><span class="navr"><a class="ttx-link" href="/sport/">Sport on P300 ▸</a><a href="/dispatch/archive/">Past editions</a></span></nav>
 <header class="mast">
   <h1>The Morning Dispatch</h1>
   <div class="dateline">
     <span>{{DATE}}</span>
     <span>Edition No. {{EDITION}}</span>
-    <span>AI &amp; Tech · Sports · Finance</span>
+    <span>AI &amp; Tech · Finance</span>
     <span>All times Pacific</span>
   </div>
 </header>
@@ -136,10 +138,6 @@ footer { margin-top: 36px; border-top: 3px double var(--ink); padding-top: 14px;
   <section class="desk" aria-labelledby="d-ai">
     <div class="desk-head"><h2 id="d-ai">AI &amp; Tech</h2></div>
 {{AI}}
-  </section>
-  <section class="desk" aria-labelledby="d-sport">
-    <div class="desk-head"><h2 id="d-sport">Sports</h2><span class="count">Football · NFL · Tennis</span></div>
-{{SPORTS}}
   </section>
   <section class="desk" aria-labelledby="d-fin">
     <div class="desk-head"><h2 id="d-fin">Finance</h2></div>

@@ -1,6 +1,6 @@
 # barkinargin.github.io
 
-Personal site and **The Morning Dispatch**, a daily front page for AI & tech, sports and finance.
+Personal site, **The Morning Dispatch** (daily AI & tech and finance front page, at /dispatch) and **Dispatch Sport** (teletext-style scores and tables, at /sport).
 
 ## How the Dispatch works
 

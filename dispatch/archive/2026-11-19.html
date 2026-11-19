@@ -6,7 +6,7 @@
 <title>The Morning Dispatch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=VT323&display=swap" rel="stylesheet">
 <style>
 /* Layout: a broadsheet front page. Masthead, market ticker, one lead story, then three desk columns that stack on phones. */
 :root {
@@ -72,7 +72,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .fact span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
 
 /* Desks */
-.desks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; padding-top: 22px; }
+.desks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; padding-top: 22px; }
 .desk { padding: 0 22px; border-right: 1px solid var(--rule); display: grid; gap: 18px; align-content: start; }
 .desk:first-child { padding-left: 0; }
 .desk:last-child { border-right: 0; padding-right: 0; }
@@ -104,6 +104,8 @@ footer { margin-top: 36px; border-top: 3px double var(--ink); padding-top: 14px;
 .topnav { display: flex; justify-content: space-between; font-size: 13px; padding-top: 14px; color: var(--muted); }
 .topnav a { color: var(--muted); text-decoration: none; }
 .archive { list-style: none; padding: 0; display: grid; gap: 10px; font-family: var(--display); font-size: 20px; }
+.navr { display: flex; gap: 18px; }
+.ttx-link { font-family: "VT323", ui-monospace, monospace; font-size: 17px; background: #000; color: #ff0 !important; padding: 0 8px; }
 .topnav a:hover { text-decoration: underline; }
 
 @media (max-width: 900px) {
@@ -120,14 +122,14 @@ footer { margin-top: 36px; border-top: 3px double var(--ink); padding-top: 14px;
 </head>
 <body>
 <div class="wrap">
-<nav class="topnav"><a href="/">← Home</a><a href="/dispatch/archive/">Past editions</a></nav>
+<nav class="topnav"><a href="/">← Home</a><span class="navr"><a class="ttx-link" href="/sport/">Sport on P300 ▸</a><a href="/dispatch/archive/">Past editions</a></span></nav>
 
 <header class="mast">
   <h1>The Morning Dispatch</h1>
   <div class="dateline">
     <span>Thursday, November 19, 2026</span>
     <span>Edition No. 1</span>
-    <span>AI &amp; Tech · Sports · Finance</span>
+    <span>AI &amp; Tech · Finance</span>
     <span>All times Pacific</span>
   </div>
 </header>
@@ -189,55 +191,6 @@ footer { margin-top: 36px; border-top: 3px double var(--ink); padding-top: 14px;
       <h3>Washington tightens remote access to AI chips</h3>
       <p>A Commerce Department interim rule now requires licenses for remote access to AI chips in five countries, closing the cloud route around export controls.</p>
       <p class="src"><a href="https://aiweekly.co/ai-news-today/edition/2026-11-17">AI Weekly</a></p>
-    </article>
-  </section>
-
-  <!-- SPORTS -->
-  <section class="desk" aria-labelledby="d-sport">
-    <div class="desk-head"><h2 id="d-sport">Sports</h2><span class="count">Football · NFL · Tennis</span></div>
-
-    <div class="sub">Football: Europe &amp; Türkiye</div>
-    <article class="item">
-      <h3>Türkiye finish their Nations League group without a point</h3>
-      <p>A 2-1 loss in Bordeaux on Sunday left the national team 0 from 6 in League A. An Emirhan Topçu own goal and a late Kroupi strike beat them before Abdülkerim Bardakcı's 90th-minute header. Arda Güler had a goal ruled out for offside after a VAR check. Whether they drop to League B depends on the other groups.</p>
-      <p class="src"><a href="https://www.timeturk.com/turkiye-fransaya-2-1-yenildi-uluslar-ligi-puansiz-bitti">Timeturk</a> · <a href="https://www.politikam.com/fransa-turkiye-2-1-mac-sonucu-arda-guler-iptal-gol">Politikam</a></p>
-    </article>
-
-    <article class="item">
-      <h3>Clubs are back this weekend</h3>
-      <p>Galatasaray went into the break top of the Süper Lig. In England, Arsenal lead on 27 points, five clear of Brighton, while Manchester United sit 18th before Sunday's trip to Anfield.</p>
-      <table class="scores" aria-label="Weekend fixtures">
-        <tr><td>Newcastle v <span class="w">Arsenal</span></td><td class="n">Sat 9:30 AM</td></tr>
-        <tr><td>Galatasaray v Samsunspor</td><td class="n">Sat</td></tr>
-        <tr><td>Kocaelispor v Fenerbahçe</td><td class="n">Sat</td></tr>
-        <tr><td>Konyaspor v Beşiktaş</td><td class="n">Sun</td></tr>
-        <tr><td>Liverpool v Man United</td><td class="n">Sun 8:30 AM</td></tr>
-        <tr><td>Galatasaray v Aston Villa (UCL)</td><td class="n">Tue 9:45 AM</td></tr>
-        <tr><td>Arsenal v Dortmund (UCL)</td><td class="n">Tue 12:00 PM</td></tr>
-      </table>
-      <p class="src"><a href="https://www.footballwebpages.co.uk/turkish-super-lig/fixtures-results/november">Football Web Pages</a> · <a href="https://www.flashscore.com/news/super-lig-weekly-galatasaray-fenerbahce-trabzonspor-besiktas-november-6-7-8-2026/CYYPViNE/">Flashscore</a> · Sportradar</p>
-    </article>
-
-    <div class="sub">NFL</div>
-    <article class="item">
-      <h3>Week 11: 49ers outlast Dallas in a 46-40 shootout</h3>
-      <table class="scores" aria-label="Week 11 results">
-        <tr><td><span class="w">SF</span> at DAL</td><td class="n">46–40</td></tr>
-        <tr><td><span class="w">LAC</span> at BAL (MNF)</td><td class="n">23–20</td></tr>
-        <tr><td><span class="w">CIN</span> v PIT (SNF)</td><td class="n">38–18</td></tr>
-        <tr><td><span class="w">KC</span> at ATL</td><td class="n">35–13</td></tr>
-        <tr><td><span class="w">BUF</span> at NYJ</td><td class="n">31–12</td></tr>
-        <tr><td><span class="w">MIN</span> at GB</td><td class="n">30–10</td></tr>
-      </table>
-      <p><strong>Tonight:</strong> Colts at Texans, 5:15 PM (TNF). Houston are heavy favorites. <strong>Sunday night:</strong> Vikings at 49ers, 5:20 PM.</p>
-      <p class="src">Scores: Sportradar</p>
-    </article>
-
-    <div class="sub">Tennis</div>
-    <article class="item">
-      <h3>Zverev first into the ATP Finals semis</h3>
-      <p>The world No. 1 beat Ben Shelton on Tuesday, his seventh win in seven meetings, to lock up a semifinal spot in Turin. Defending champion Jannik Sinner is out with a knee injury. Carlos Alcaraz opened 6-2, 6-2 over Frances Tiafoe as he chases his first Finals title. The final is Sunday.</p>
-      <p class="src"><a href="https://www.atptour.com/en/news/zverev-shelton-nitto-atp-finals-2026-tuesday">ATP Tour</a> · <a href="https://tennisuptodate.com/atp/atp-finals-2026-results-standings-draw-entry-list-schedule-prize-money-history-and-format">Tennis Uptodate</a></p>
     </article>
   </section>
 

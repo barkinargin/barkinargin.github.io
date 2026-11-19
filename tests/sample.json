@@ -39,6 +39,13 @@
     "summary": "teaser text",
     "published": "2026-11-19T18:07:53.958810+00:00",
     "source": "Daily Sabah Football"
+   },
+   {
+    "title": "Arsenal top the table after win at Newcastle",
+    "url": "https://bbc.co.uk/x",
+    "summary": "",
+    "published": "2026-11-19T18:07:53.958810+00:00",
+    "source": "BBC Football"
    }
   ],
   "nfl": [
@@ -50,7 +57,15 @@
     "source": "ESPN NFL"
    }
   ],
-  "tennis": []
+  "tennis": [
+   {
+    "title": "Alcaraz beats Medvedev at ATP Finals",
+    "url": "https://espn.com/t",
+    "summary": "",
+    "published": "2026-11-19T18:07:53.958810+00:00",
+    "source": "ESPN Tennis"
+   }
+  ]
  },
  "scores": [
   {
@@ -104,6 +119,32 @@
    "detail": "FT",
    "start_pt": "",
    "start_iso": ""
+  },
+  {
+   "league": "Champions League",
+   "home": "Galatasaray",
+   "away": "Aston Villa",
+   "home_score": null,
+   "away_score": null,
+   "home_won": false,
+   "away_won": false,
+   "state": "pre",
+   "detail": "",
+   "start_pt": "Tue 9:45 AM",
+   "start_iso": ""
+  },
+  {
+   "league": "Süper Lig",
+   "home": "Fenerbahçe",
+   "away": "Beşiktaş",
+   "home_score": "3",
+   "away_score": "2",
+   "home_won": true,
+   "away_won": false,
+   "state": "post",
+   "detail": "FT",
+   "start_pt": "",
+   "start_iso": ""
   }
  ],
  "quotes": [
@@ -120,5 +161,132 @@
    "pct": 0.5
   }
  ],
- "errors": []
+ "errors": [],
+ "tables": {
+  "Süper Lig": [
+   {
+    "pos": 1,
+    "team": "Galatasaray",
+    "p": 10,
+    "w": 8,
+    "d": 1,
+    "l": 1,
+    "gd": 11,
+    "pts": 25,
+    "rank": 1
+   },
+   {
+    "pos": 2,
+    "team": "Fenerbahçe",
+    "p": 10,
+    "w": 7,
+    "d": 1,
+    "l": 2,
+    "gd": 9,
+    "pts": 22,
+    "rank": 2
+   },
+   {
+    "pos": 3,
+    "team": "Beşiktaş",
+    "p": 10,
+    "w": 6,
+    "d": 1,
+    "l": 3,
+    "gd": 7,
+    "pts": 19,
+    "rank": 3
+   },
+   {
+    "pos": 4,
+    "team": "Trabzonspor",
+    "p": 10,
+    "w": 5,
+    "d": 1,
+    "l": 4,
+    "gd": 5,
+    "pts": 16,
+    "rank": 4
+   },
+   {
+    "pos": 5,
+    "team": "Göztepe",
+    "p": 10,
+    "w": 4,
+    "d": 1,
+    "l": 5,
+    "gd": 3,
+    "pts": 13,
+    "rank": 5
+   },
+   {
+    "pos": 6,
+    "team": "Samsunspor",
+    "p": 10,
+    "w": 3,
+    "d": 1,
+    "l": 6,
+    "gd": 1,
+    "pts": 10,
+    "rank": 6
+   }
+  ],
+  "Premier League": [
+   {
+    "pos": 1,
+    "team": "Arsenal",
+    "p": 10,
+    "w": 9,
+    "d": 0,
+    "l": 1,
+    "gd": 15,
+    "pts": 27,
+    "rank": 1
+   },
+   {
+    "pos": 2,
+    "team": "Brighton",
+    "p": 10,
+    "w": 8,
+    "d": 0,
+    "l": 2,
+    "gd": 12,
+    "pts": 24,
+    "rank": 2
+   },
+   {
+    "pos": 3,
+    "team": "Man City",
+    "p": 10,
+    "w": 7,
+    "d": 0,
+    "l": 3,
+    "gd": 9,
+    "pts": 21,
+    "rank": 3
+   },
+   {
+    "pos": 4,
+    "team": "Liverpool",
+    "p": 10,
+    "w": 6,
+    "d": 0,
+    "l": 4,
+    "gd": 6,
+    "pts": 18,
+    "rank": 4
+   },
+   {
+    "pos": 5,
+    "team": "Chelsea",
+    "p": 10,
+    "w": 5,
+    "d": 0,
+    "l": 5,
+    "gd": 3,
+    "pts": 15,
+    "rank": 5
+   }
+  ]
+ }
 }

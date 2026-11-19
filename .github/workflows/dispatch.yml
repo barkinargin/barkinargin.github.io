@@ -4,7 +4,13 @@ on:
   schedule:
     # 13:44 UTC = 5:44 AM Pacific in winter (6:44 AM in summer)
     - cron: "44 13 * * *"
-  workflow_dispatch: {}   # "Run workflow" button for a manual edition
+  workflow_dispatch:       # "Run workflow" button for a manual edition
+    inputs:
+      only:
+        description: "What to rebuild"
+        type: choice
+        options: [all, sports]
+        default: all
   push:
     branches: [main]      # redeploy the site whenever you change it
 
@@ -32,14 +38,14 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional: add it to get Claude-written summaries
           DISPATCH_MODEL: ${{ vars.DISPATCH_MODEL }}            # optional: override the model
-        run: python scripts/build_dispatch.py
+        run: python scripts/build_dispatch.py --only "${{ inputs.only || 'all' }}"
 
       - name: Save the edition to the repo
         if: github.event_name != 'push'
         run: |
           git config user.name "dispatch-bot"
           git config user.email "dispatch-bot@users.noreply.github.com"
-          git add dispatch
+          git add dispatch sport
           git diff --cached --quiet || git commit -m "Dispatch: $(TZ=America/Los_Angeles date +%Y-%m-%d)"
           git push
 
