@@ -54,12 +54,15 @@ FEEDS = {
         ("BBC Football", "https://feeds.bbci.co.uk/sport/football/rss.xml"),
         ("Daily Sabah Football", "https://www.dailysabah.com/rss/sports/football"),
         ("ESPN Soccer", "https://www.espn.com/espn/rss/soccer/news"),
+        ("The Guardian Football", "https://www.theguardian.com/football/rss"),
     ],
     "nfl": [
         ("ESPN NFL", "https://www.espn.com/espn/rss/nfl/news"),
+        ("Yahoo Sports NFL", "https://sports.yahoo.com/nfl/rss/"),
     ],
     "tennis": [
         ("ESPN Tennis", "https://www.espn.com/espn/rss/tennis/news"),
+        ("BBC Tennis", "https://feeds.bbci.co.uk/sport/tennis/rss.xml"),
     ],
 }
 
@@ -88,9 +91,20 @@ def log(msg: str) -> None:
 
 
 def fetch(url: str, timeout: int = 15, headers: dict | None = None, data: bytes | None = None) -> bytes:
-    req = urllib.request.Request(url, data=data, headers={"User-Agent": UA, **(headers or {})})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read()
+    """GET (or POST with data). Retries once, since news feeds sometimes answer with an empty body."""
+    import time
+    for attempt in (1, 2):
+        req = urllib.request.Request(url, data=data, headers={"User-Agent": UA, **(headers or {})})
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                body = r.read()
+            if body.strip() or attempt == 2:
+                return body
+        except Exception:  # noqa: BLE001
+            if attempt == 2:
+                raise
+        time.sleep(3)
+    return b""
 
 
 def clean(text: str | None, limit: int = 0) -> str:
@@ -151,7 +165,9 @@ def read_feed(source: str, url: str) -> list[dict]:
 
 
 def read_scoreboard(label: str, path: str) -> list[dict]:
-    data = json.loads(fetch(f"{ESPN}/{path}/scoreboard"))
+    today = dt.datetime.now(PT).date()
+    window = f"{(today - dt.timedelta(days=4)):%Y%m%d}-{(today + dt.timedelta(days=7)):%Y%m%d}"
+    data = json.loads(fetch(f"{ESPN}/{path}/scoreboard?dates={window}&limit=300"))
     games = []
     for ev in data.get("events", []):
         comp = (ev.get("competitions") or [{}])[0]

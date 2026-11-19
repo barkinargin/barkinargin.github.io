@@ -15,6 +15,12 @@ TR_PATTERN = re.compile(
     r"ba[sş]ak[sş]ehir|samsunspor|g[oö]ztepe|kocaeli|konyaspor|montella|arda g[uü]ler|kenan y[iı]ld[iı]z",
     re.I,
 )
+BIG_EUROPE = re.compile(
+    r"champions league|europa|premier league|la ?liga|serie a|bundesliga|ligue 1|arsenal|chelsea|liverpool|"
+    r"man(chester)? (city|utd|united)|tottenham|newcastle|aston villa|real madrid|barcelona|atl[eé]tico|"
+    r"bayern|dortmund|leverkusen|juventus|inter |milan|napoli|roma|psg|paris saint|uefa|england|spain|france|"
+    r"germany|italy|portugal|nations league|ballon", re.I)
+OFF_TOPIC = re.compile(r"\bmls\b|inter miami|league one|league two|national league|scottish|women's super league|wsl\b", re.I)
 EUROPE_LEAGUES = ["Champions League", "Europa League", "Premier League", "LaLiga", "Serie A", "Bundesliga"]
 LEAGUE_SHORT = {"Champions League": "UCL", "Europa League": "UEL", "Premier League": "PREM",
                 "LaLiga": "LIGA", "Serie A": "SERIE A", "Bundesliga": "BUNDES", "Süper Lig": "SÜPER LIG", "NFL": "NFL"}
@@ -90,6 +96,7 @@ def _row(left, mid, right, meta, lwon=False, rwon=False, live=False) -> str:
 
 def score_rows(games: list[dict], leagues: list[str], finished: bool, limit: int, show_league: bool) -> str:
     rows = []
+    games = sorted(games, key=lambda g: g.get("start_iso") or "", reverse=finished)
     for lg in leagues:
         for g in games:
             if g["league"] != lg:
@@ -138,6 +145,13 @@ def render_teletext(ed: dict, raw: dict, now: dt.datetime) -> str:
     football = ed.get("football", [])
     tr_items = [i for i in football if is_turkish(i["headline"] + " " + i.get("summary", ""))]
     eu_items = [i for i in football if i not in tr_items]
+    # Big European stories first; drop clearly off-topic ones (MLS, lower English leagues) when there's enough else.
+    def eu_rank(i: dict) -> int:
+        text = i["headline"] + " " + i.get("summary", "")
+        return 0 if BIG_EUROPE.search(text) else (2 if OFF_TOPIC.search(text) else 1)
+    eu_items.sort(key=eu_rank)
+    if sum(eu_rank(i) < 2 for i in eu_items) >= 2:
+        eu_items = [i for i in eu_items if eu_rank(i) < 2]
     nfl_items, tennis_items = ed.get("nfl", []), ed.get("tennis", [])
 
     body = {
