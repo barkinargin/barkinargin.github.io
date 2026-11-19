@@ -165,13 +165,22 @@ def read_feed(source: str, url: str) -> list[dict]:
 
 
 def read_scoreboard(label: str, path: str) -> list[dict]:
+    """Default scoreboard (current round) plus each of the last 3 days, so recent results show too."""
     today = dt.datetime.now(PT).date()
-    window = f"{(today - dt.timedelta(days=4)):%Y%m%d}-{(today + dt.timedelta(days=7)):%Y%m%d}"
-    try:  # a date window adds recent results; fall back to ESPN's default view if it's refused
-        data = json.loads(fetch(f"{ESPN}/{path}/scoreboard?dates={window}"))
-    except Exception as e:  # noqa: BLE001
-        log(f"{label}: date window refused ({e}), using default scoreboard")
-        data = json.loads(fetch(f"{ESPN}/{path}/scoreboard"))
+    events, seen = [], set()
+    urls = [f"{ESPN}/{path}/scoreboard"] + [
+        f"{ESPN}/{path}/scoreboard?dates={(today - dt.timedelta(days=d)):%Y%m%d}" for d in (1, 2, 3)]
+    for n, url in enumerate(urls):
+        try:
+            for ev in json.loads(fetch(url)).get("events", []):
+                if ev.get("id") not in seen:
+                    seen.add(ev.get("id"))
+                    events.append(ev)
+        except Exception as e:  # noqa: BLE001 - the default view is required, extra days are a bonus
+            if n == 0:
+                raise
+            log(f"{label}: no data for {url[-8:]} ({e})")
+    data = {"events": events}
     games = []
     for ev in data.get("events", []):
         comp = (ev.get("competitions") or [{}])[0]
