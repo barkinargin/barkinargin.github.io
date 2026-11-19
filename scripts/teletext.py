@@ -23,7 +23,7 @@ BIG_EUROPE = re.compile(
 OFF_TOPIC = re.compile(r"\bmls\b|inter miami|league one|league two|national league|scottish|women's super league|wsl\b", re.I)
 EUROPE_LEAGUES = ["Champions League", "Europa League", "Premier League", "LaLiga", "Serie A", "Bundesliga"]
 LEAGUE_SHORT = {"Champions League": "UCL", "Europa League": "UEL", "Premier League": "PREM",
-                "LaLiga": "LIGA", "Serie A": "SERIE A", "Bundesliga": "BUNDES", "Süper Lig": "SÜPER LIG", "NFL": "NFL"}
+                "LaLiga": "LIGA", "Serie A": "SERIE A", "Bundesliga": "BUNDES", "Süper Lig": "SÜPER LIG", "NFL": "NFL", "Nations League": "NATIONS"}
 
 # 5x5 mosaic letters for the block-graphic banners ("#" = lit cell)
 FONT = {
@@ -157,6 +157,11 @@ def render_teletext(ed: dict, raw: dict, now: dt.datetime) -> str:
     body = {
         301: "".join([
             block("TÜRKİYE: TOP STORIES", "blue", story_rows(tr_items, 4)),
+            block("MİLLİ TAKIM", "red", score_rows(
+                [g for g in scores if g["league"] == "Nations League" and is_turkish(g["home"] + " " + g["away"])],
+                ["Nations League"], True, 3, False) + score_rows(
+                [g for g in scores if g["league"] == "Nations League" and is_turkish(g["home"] + " " + g["away"])],
+                ["Nations League"], False, 3, False)),
             block("SÜPER LIG: RESULTS", "blue", score_rows(scores, ["Süper Lig"], True, 10, False)),
             block("SÜPER LIG: COMING UP (PT)", "magenta", score_rows(scores, ["Süper Lig"], False, 10, False)),
             block("SÜPER LIG: TABLE", "green", table_rows(tables.get("Süper Lig", []), 18)),
@@ -267,6 +272,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--yellow); outlin
 .band-blue { background: var(--blue); color: var(--yellow); }
 .band-magenta { background: var(--magenta); color: var(--white); }
 .band-green { background: var(--green); color: var(--black); }
+.band-red { background: var(--red); color: var(--white); }
 
 /* index */
 .index { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }

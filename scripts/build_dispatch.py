@@ -77,6 +77,7 @@ SCOREBOARDS = [
     ("Bundesliga", "soccer/ger.1", "football"),
     ("Champions League", "soccer/uefa.champions", "football"),
     ("Europa League", "soccer/uefa.europa", "football"),
+    ("Nations League", "soccer/uefa.nations", "football"),
 ]
 TABLES = [("Süper Lig", "soccer/tur.1"), ("Premier League", "soccer/eng.1")]
 QUOTES = [("S&P 500", "^GSPC"), ("Dow", "^DJI"), ("Nasdaq", "^IXIC"), ("10-yr yield", "^TNX")]
