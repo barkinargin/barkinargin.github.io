@@ -153,6 +153,9 @@
         '<span class="lm-label" aria-hidden="true"><small>' + L.name + '</small><b>' + L.label + ' \u2192</b></span>';
       layer.appendChild(el);
       L.el = el;
+      var hit = el.querySelector(".lm-hit");
+      ["mouseenter", "focus"].forEach(function (ev) { hit.addEventListener(ev, function () { el.classList.add("on"); }); });
+      ["mouseleave", "blur"].forEach(function (ev) { hit.addEventListener(ev, function () { el.classList.remove("on"); }); });
     });
     placeLandmarks();
     window.addEventListener("resize", placeLandmarks);

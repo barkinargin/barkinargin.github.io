@@ -198,10 +198,10 @@ a.app:focus-visible { outline: none; }
   box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: opacity 0.35s ease, transform 0.5s cubic-bezier(.34,1.45,.64,1); }
 .lm-label b { font-family: var(--body); font-weight: 600; font-size: 14px; }
 .lm-label small { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #5b616b; }
-.landmark:has(.lm-hit:hover) .lm-img, .landmark:has(.lm-hit:focus-visible) .lm-img, .landmark.hint .lm-img {
+.landmark.on .lm-img, .landmark.hint .lm-img {
   transform: translateY(-3%) scale(1.08); filter: drop-shadow(0 24px 28px rgba(0,0,0,0.55)) brightness(1.1) contrast(1.05); }
-.landmark:has(.lm-hit:hover)::before, .landmark:has(.lm-hit:focus-visible)::before, .landmark.hint::before { opacity: 1; }
-.landmark:has(.lm-hit:hover) .lm-label, .landmark:has(.lm-hit:focus-visible) .lm-label { opacity: 1; transform: translate(-50%, -16px); }
+.landmark.on::before, .landmark.hint::before { opacity: 1; }
+.landmark.on .lm-label { opacity: 1; transform: translate(-50%, -16px); }
 @media (prefers-reduced-motion: reduce) { .lm-img, .lm-label { transition: none; } }
 
 /* ---------------- app launch ---------------- */
@@ -375,6 +375,6 @@ footer { font-size: 13px; color: var(--muted); }
   }).catch(function () {});
 })();
 </script>
-<script src="/assets/home.js" defer></script>
+<script src="/assets/home.js?v=1795146193" defer></script>
 </body>
 </html>
