@@ -6,7 +6,7 @@
 <title>The Morning Dispatch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=VT323&display=swap" rel="stylesheet">
 <style>
 /* Layout: a broadsheet front page. Masthead, market ticker, one lead story, then three desk columns that stack on phones. */
 :root {
@@ -72,7 +72,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .fact span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
 
 /* Desks */
-.desks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; padding-top: 22px; }
+.desks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; padding-top: 22px; }
 .desk { padding: 0 22px; border-right: 1px solid var(--rule); display: grid; gap: 18px; align-content: start; }
 .desk:first-child { padding-left: 0; }
 .desk:last-child { border-right: 0; padding-right: 0; }
@@ -104,6 +104,8 @@ footer { margin-top: 36px; border-top: 3px double var(--ink); padding-top: 14px;
 .topnav { display: flex; justify-content: space-between; font-size: 13px; padding-top: 14px; color: var(--muted); }
 .topnav a { color: var(--muted); text-decoration: none; }
 .archive { list-style: none; padding: 0; display: grid; gap: 10px; font-family: var(--display); font-size: 20px; }
+.navr { display: flex; gap: 18px; }
+.ttx-link { font-family: "VT323", ui-monospace, monospace; font-size: 17px; background: #000; color: #ff0 !important; padding: 0 8px; }
 .topnav a:hover { text-decoration: underline; }
 
 @media (max-width: 900px) {
@@ -116,6 +118,13 @@ footer { margin-top: 36px; border-top: 3px double var(--ink); padding-top: 14px;
   .tick:nth-child(2) { border-right: 0; }
   .tick:nth-child(-n+2) { border-bottom: 1px solid var(--rule); }
 }
+
+/* arrival animation after launching from the home screen */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  body { animation: enter 0.55s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes enter { from { opacity: 0; transform: translateY(16px) scale(0.985); } to { opacity: 1; transform: none; } }
+}
 </style>
 </head>
-<body><div class="wrap"><nav class="topnav"><a href="/dispatch/">← Today's edition</a></nav><header class="mast"><h1>Past editions</h1></header><ul class="archive"><li><a href="2026-11-19.html">Thursday, November 19, 2026</a></li></ul></div></body></html>
+<body><div class="wrap"><nav class="topnav"><a href="/dispatch/">← Today's edition</a></nav><header class="mast"><h1>Past editions</h1></header><ul class="archive"><li><a href="2026-11-20.html">Friday, November 20, 2026</a></li><li><a href="2026-11-19.html">Thursday, November 19, 2026</a></li></ul></div></body></html>
