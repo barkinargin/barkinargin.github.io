@@ -164,7 +164,7 @@
     var W = hero.clientWidth, H = hero.clientHeight;
     IMG.ax = W / H < 1.15 ? 0.1 : 0.5;                 // narrow screens: keep Istanbul and London in view
     var s = Math.max(W / IMG.w, H / IMG.h) * IMG.zoom;
-    var drop = Math.min(H * (W / H > 1.6 ? 0.13 : IMG.drop), IMG.pad * s - 2);   // wide screens get more sky
+    var drop = Math.min(H * (W / H > 1.6 ? 0.095 : IMG.drop), IMG.pad * s - 2);   // wide screens get more sky
     var ox = (W - IMG.w * s) * IMG.ax, oy = drop;     // where the photo's own top edge lands
     var img = document.querySelector(".city");
     if (img) { var st = img.style; st.width = IMG.w * s + "px"; st.height = (IMG.h + IMG.pad) * s + "px"; st.left = ox + "px"; st.top = (oy - IMG.pad * s) + "px"; }
@@ -220,9 +220,7 @@
   // Galata is the foreground tower: on wider screens it is drawn larger, growing up from its base,
   // so it stays big and high even when the city slides down to make room for sky.
   function boost(L, c) {
-    if (L.id !== "galata") return 1;
-    var a = c.W / c.H;
-    return a < 1.15 ? 1 : Math.min(1.42, 1 + (a - 1.15) * 0.62);
+    return 1;   // Galata stays exactly as in the photo
   }
   function lift(L, c, x, y) {          // where an image point lands after the boost
     var k = L.k || 1, bx = L.box[0] + L.box[2] / 2, by = L.box[1] + L.box[3];
