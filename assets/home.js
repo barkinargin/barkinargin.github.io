@@ -135,6 +135,28 @@
     }
   ];
 
+  // ferries cut out of the photo; they cruise slowly along the river and loop
+  var BOATS = [{"src": "/assets/lm/boat-ferry.webp", "box": [1870, 740, 220, 139], "dx": -620, "dy": -150, "k": 0.62, "period": 75, "offset": 0.12}, {"src": "/assets/lm/boat-speed.webp", "box": [1173, 620, 94, 49], "dx": -300, "dy": -30, "k": 0.85, "period": 32, "offset": 0.45}, {"src": "/assets/lm/boat-ferry2.webp", "box": [828, 644, 91, 103], "dx": 480, "dy": 60, "k": 1.12, "period": 85, "offset": 0.25}, {"src": "/assets/lm/boat-ferry3.webp", "box": [656, 844, 151, 79], "dx": 520, "dy": 40, "k": 1.1, "period": 95, "offset": 0.6}];
+  var boatLayer = document.getElementById("boats");
+  function buildBoats() {
+    BOATS.forEach(function (b) { var i = new Image(); i.className = "boat"; i.alt = ""; i.src = b.src; boatLayer.appendChild(i); b.el = i; });
+    if (reduce) { BOATS.forEach(function (b) { b.p = 0; }); moveBoats(0); return; }
+    (function tick(now) { requestAnimationFrame(tick); if (!document.hidden) moveBoats(now / 1000); })(performance.now());
+  }
+  function moveBoats(t) {
+    var c = cover();
+    BOATS.forEach(function (b, n) {
+      var p = reduce ? 0 : ((t / b.period + b.offset) % 1);
+      var fade = reduce ? 1 : Math.min(1, p / 0.08, (1 - p) / 0.08);
+      var bob = reduce ? 0 : Math.sin(t * 1.3 + n * 2) * 0.6;
+      var x = c.ox + (b.box[0] + b.dx * p) * c.s, y = c.oy + (b.box[1] + b.dy * p) * c.s + bob;
+      var k = 1 + (b.k - 1) * p, st = b.el.style;
+      st.width = b.box[2] * c.s + "px"; st.height = b.box[3] * c.s + "px";
+      st.transform = "translate(" + x + "px," + y + "px) scale(" + k + ")";
+      st.opacity = fade;
+    });
+  }
+
   var layer = document.getElementById("landmarks");
   function cover() {
     var W = hero.clientWidth, H = hero.clientHeight, s = Math.max(W / IMG.w, H / IMG.h);
@@ -346,6 +368,7 @@
     }).catch(function () {});
   }
 
+  buildBoats();
   build();
   intro();
   river();
