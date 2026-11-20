@@ -34,8 +34,10 @@ a:focus-visible { outline: 3px solid #1b1e23; outline-offset: 4px; border-radius
   height: clamp(680px, 96svh, 980px); isolation: isolate; }
 .hero .city { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 58%; z-index: -3; }
 .hero { background: #1b1d21; }
+.river { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
+.gl .river { opacity: 1; }
 .hero::before { /* film grain */
-  content: ""; position: absolute; inset: 0; z-index: -2; opacity: 0.10; mix-blend-mode: overlay; pointer-events: none;
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0.10; mix-blend-mode: overlay; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .hero::after { /* mist the phone rises out of */
@@ -74,7 +76,7 @@ a:focus-visible { outline: 3px solid #1b1e23; outline-offset: 4px; border-radius
 .riser:hover .phone, .riser:focus-within .phone { transform: translateY(calc(var(--w) * -0.46)); }
 
 /* water in front of the phone's lower half: river texture, blur of what's underneath, a bright waterline */
-.water { position: absolute; left: 50%; top: var(--waterline); bottom: 0; width: calc(var(--w) * 2.1); transform: translateX(-50%); overflow: hidden;
+.water { position: absolute; left: 50%; top: calc(var(--waterline) + 3px); bottom: 0; width: calc(var(--w) * 2.1); transform: translateX(-50%); overflow: hidden;
   pointer-events: none; -webkit-backdrop-filter: blur(7px) brightness(0.82); backdrop-filter: blur(7px) brightness(0.82);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 26%, #000 74%, transparent), linear-gradient(#000, #000);
   -webkit-mask-composite: source-in;
@@ -85,14 +87,18 @@ a:focus-visible { outline: 3px solid #1b1e23; outline-offset: 4px; border-radius
   animation: drift 9s ease-in-out infinite alternate; }
 .water::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px;
   background: linear-gradient(90deg, transparent 22%, rgba(255,255,255,0.7) 34%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0.7) 66%, transparent 78%); }
+.gl .water::before, .gl .water::after { display: none; }
+.waterfront { position: absolute; left: 50%; top: calc(var(--waterline) - 16px); bottom: 0; width: calc(var(--w) * 2.1); height: calc(100% - var(--waterline) + 16px);
+  transform: translateX(-50%); pointer-events: none; opacity: 0; transition: opacity 1s ease 0.6s; }
+.gl .waterfront { opacity: 1; }
 @keyframes drift { from { transform: translateX(-4%); } to { transform: translateX(4%); } }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
 .ripples { position: absolute; left: 50%; top: var(--waterline); width: calc(var(--w) * 1.04); aspect-ratio: 7 / 1; transform: translate(-50%, -50%); pointer-events: none; }
-.ripples i { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.8);
+.ripples i { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.42);
   animation: ripple 4.2s cubic-bezier(.2,.6,.3,1) infinite; opacity: 0; }
 .ripples i:nth-child(2) { animation-delay: 1.4s; } .ripples i:nth-child(3) { animation-delay: 2.8s; }
 .ripples .contact { inset: 30% 2%; border: 0; background: radial-gradient(closest-side, rgba(10,12,16,0.35), transparent); animation: none; opacity: 1; }
-@keyframes ripple { 0% { transform: scale(0.96); opacity: 0.7; } 100% { transform: scale(2.6); opacity: 0; } }
+@keyframes ripple { 0% { transform: scale(0.96); opacity: 0.55; } 100% { transform: scale(2.6); opacity: 0; } }
 .stage:has(.riser:hover) .ripples i { animation-duration: 2.2s; }
 .btn { position: absolute; width: 4px; border-radius: 2px; background: linear-gradient(90deg, #6f737a, #c8cbd0); }
 .btn.action { left: -3px; top: 17%; height: 4.5%; }
@@ -178,6 +184,15 @@ a.app:focus-visible { outline: none; }
 .app.soon .label { opacity: 0.7; }
 
 
+/* ---------------- app launch ---------------- */
+.launch { position: fixed; z-index: 1000; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+  transition: left 0.56s cubic-bezier(.32,.72,0,1), top 0.56s cubic-bezier(.32,.72,0,1), width 0.56s cubic-bezier(.32,.72,0,1),
+              height 0.56s cubic-bezier(.32,.72,0,1), border-radius 0.56s cubic-bezier(.32,.72,0,1); }
+.launch.open { left: 0 !important; top: 0 !important; width: 100vw !important; height: 100vh !important; border-radius: 0 !important; }
+.launch .face { position: absolute; inset: 0; display: grid; place-items: center; border-radius: inherit; overflow: hidden;
+  transition: opacity 0.28s ease 0.22s, transform 0.56s cubic-bezier(.32,.72,0,1); }
+.launch.open .face { opacity: 0; transform: scale(1.6); }
+
 /* ---------------- below the fold ---------------- */
 .wrap { max-width: 760px; margin: 0 auto; padding: 72px 20px 64px; display: grid; gap: 56px; }
 .label-h { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 8px; margin: 0 0 4px; font-weight: 500; }
@@ -206,6 +221,7 @@ footer { font-size: 13px; color: var(--muted); }
   .app .icon { transition: none; }
   a.app:hover .icon, a.app:focus-visible .icon { transform: none; }
 }
+@view-transition { navigation: auto; }
 </style>
 </head>
 <body>
@@ -213,6 +229,7 @@ footer { font-size: 13px; color: var(--muted); }
 <header class="hero">
   <img class="city" src="/assets/city.jpg" srcset="/assets/city-1600.jpg 1600w, /assets/city.jpg 3000w" sizes="100vw"
        alt="One imagined city seen from above: Istanbul's Galata Tower, mosques and Bosphorus Bridge, London's Tower Bridge, Big Ben and London Eye, and downtown Los Angeles with palms and Griffith Observatory, around a calm river">
+  <canvas class="river" id="river" aria-hidden="true"></canvas>
   <div class="topbar">
     <span class="name">barkinargin</span>
     <nav aria-label="Main"><a href="/dispatch/">Dispatch</a><a href="/sport/">Sport</a><a href="#work">All projects</a></nav>
@@ -238,13 +255,13 @@ footer { font-size: 13px; color: var(--muted); }
             <div class="clock"><span class="zone">LA</span><span class="t" data-tz="America/Los_Angeles">--:--</span></div>
           </div>
           <ul class="apps">
-            <li><a class="app" href="/dispatch/">
+            <li><a class="app" href="/dispatch/" data-bg="#f2f3f0">
               <span class="icon i-dispatch" aria-hidden="true"><b>D</b><span class="lines"><i></i><i></i></span></span>
               <span class="label">Dispatch</span></a></li>
-            <li><a class="app" href="/sport/">
+            <li><a class="app" href="/sport/" data-bg="#000000">
               <span class="icon i-sport" aria-hidden="true"><span>P300</span><span class="bars"><i style="background:#ff3b30"></i><i style="background:#00f000"></i><i style="background:#ff0"></i><i style="background:#0ff"></i></span></span>
               <span class="label">Sport</span></a></li>
-            <li><a class="app" href="/parking/">
+            <li><a class="app" href="/parking/" data-bg="#eef0f2">
               <span class="icon i-parking" aria-hidden="true"><span class="sign">P</span><span class="dot"></span></span>
               <span class="label">Parking</span></a></li>
             <li><span class="app soon" aria-label="Coming soon">
@@ -261,6 +278,7 @@ footer { font-size: 13px; color: var(--muted); }
     </div>
     </div>
     <div class="water" aria-hidden="true"></div>
+    <canvas class="waterfront" id="waterfront" aria-hidden="true"></canvas>
     <div class="ripples" aria-hidden="true"><i class="contact"></i><i></i><i></i><i></i></div>
   </div>
 </header>
@@ -336,5 +354,6 @@ footer { font-size: 13px; color: var(--muted); }
   }).catch(function () {});
 })();
 </script>
+<script src="/assets/home.js" defer></script>
 </body>
 </html>
