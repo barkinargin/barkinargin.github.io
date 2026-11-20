@@ -134,12 +134,50 @@
       .catch(function () { document.documentElement.classList.add("nogl"); });
   }
 
+  // ------------------------------------------------------------ clickable landmarks
+  // box: x, y, width, height in the 3000 x 1688 city image; poly: the outline, in % of the box (also the click area)
+  var IMG = { w: 3000, h: 1688, anchorX: 0.5, anchorY: 0.58 };
+  var LANDMARKS = [
+    { id: "galata", name: "Galata Tower", label: "Dispatch", href: "/dispatch/", bg: "#f2f3f0", src: "/assets/lm/galata.webp",
+      box: [333, 492, 312, 905],
+      poly: "49.04% 0.44%, 52.88% 4.2%, 52.88% 6.74%, 51.6% 8.84%, 64.74% 20.77%, 79.17% 31.82%, 87.18% 35.36%, 92.31% 36.91%, 89.1% 37.68%, 89.74% 44.53%, 98.72% 45.64%, 97.44% 47.85%, 94.87% 48.95%, 94.87% 57.79%, 98.72% 58.56%, 97.44% 60.77%, 93.27% 61.66%, 92.95% 99.45%, 85.58% 99.56%, 61.54% 95.47%, 3.85% 91.38%, 5.45% 89.28%, 5.45% 61.22%, 1.28% 60.55%, 1.92% 58.34%, 4.49% 57.46%, 4.49% 49.06%, 1.92% 46.3%, 3.85% 45.08%, 9.94% 44.53%, 9.94% 37.68%, 7.69% 36.91%, 12.5% 35.69%, 23.72% 31.82%, 35.9% 20.77%, 46.79% 8.84%, 45.51% 6.74%, 45.51% 4.2%" }
+  ];
+  var layer = document.getElementById("landmarks"), hero = document.querySelector(".hero");
+  function buildLandmarks() {
+    if (!layer) return;
+    LANDMARKS.forEach(function (L) {
+      var el = document.createElement("div");
+      el.className = "landmark"; el.dataset.id = L.id;
+      el.innerHTML = '<img class="lm-img" alt="" src="' + L.src + '">' +
+        '<a class="lm-hit" href="' + L.href + '" data-bg="' + L.bg + '" style="clip-path: polygon(' + L.poly + ')" aria-label="' + L.name + ': open ' + L.label + '"></a>' +
+        '<span class="lm-label" aria-hidden="true"><small>' + L.name + '</small><b>' + L.label + ' \u2192</b></span>';
+      layer.appendChild(el);
+      L.el = el;
+    });
+    placeLandmarks();
+    window.addEventListener("resize", placeLandmarks);
+    if (!reduce) setTimeout(function () {       // one gentle hint that these are clickable
+      LANDMARKS.forEach(function (L) { L.el.classList.add("hint"); setTimeout(function () { L.el.classList.remove("hint"); }, 1400); });
+    }, 3400);
+  }
+  function placeLandmarks() {   // same "cover" maths as the hero photo (object-position 50% 58%)
+    var W = hero.clientWidth, H = hero.clientHeight, s = Math.max(W / IMG.w, H / IMG.h);
+    var ox = (W - IMG.w * s) * IMG.anchorX, oy = (H - IMG.h * s) * IMG.anchorY;
+    LANDMARKS.forEach(function (L) {
+      var b = L.box, st = L.el.style;
+      st.left = (ox + b[0] * s) + "px"; st.top = (oy + b[1] * s) + "px";
+      st.width = (b[2] * s) + "px"; st.height = (b[3] * s) + "px";
+    });
+  }
+  buildLandmarks();
+
   // ------------------------------------------------------------ app launch transition
   function launch(e) {
     var a = e.currentTarget;
     if (reduce || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
-    var icon = a.querySelector(".icon"), r = icon.getBoundingClientRect(), cs = getComputedStyle(icon);
+    var lm = a.closest(".landmark");
+    var icon = lm ? lm.querySelector(".lm-img") : a.querySelector(".icon"), r = icon.getBoundingClientRect(), cs = getComputedStyle(icon);
     var ov = document.createElement("div");
     ov.className = "launch";
     ov.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px;border-radius:" +
@@ -147,7 +185,7 @@
     ov.style.setProperty("--w", getComputedStyle(stage).getPropertyValue("--w"));
     var face = icon.cloneNode(true);
     face.className = icon.className + " face";
-    face.removeAttribute("style");
+    if (lm) { ov.style.borderRadius = "0"; ov.style.boxShadow = "none"; face.style.objectFit = "contain"; }
     ov.appendChild(face);
     document.body.appendChild(ov);
     icon.style.visibility = "hidden";
@@ -155,10 +193,10 @@
     ov.classList.add("open");
     setTimeout(function () { window.location.href = a.href; }, 560);
   }
-  document.querySelectorAll("a.app").forEach(function (a) { a.addEventListener("click", launch); });
+  document.querySelectorAll("a.app, a.lm-hit").forEach(function (a) { a.addEventListener("click", launch); });
   window.addEventListener("pageshow", function (e) {   // coming back: clean up
     document.querySelectorAll(".launch").forEach(function (n) { n.remove(); });
-    document.querySelectorAll("a.app .icon").forEach(function (n) { n.style.visibility = ""; });
+    document.querySelectorAll("a.app .icon, .lm-img").forEach(function (n) { n.style.visibility = ""; });
   });
 
   startWater();
