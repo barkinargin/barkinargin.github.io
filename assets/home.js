@@ -217,13 +217,26 @@
     window.addEventListener("resize", place);
   }
 
+  // Galata is the foreground tower: on wider screens it is drawn larger, growing up from its base,
+  // so it stays big and high even when the city slides down to make room for sky.
+  function boost(L, c) {
+    if (L.id !== "galata") return 1;
+    var a = c.W / c.H;
+    return a < 1.15 ? 1 : Math.min(1.42, 1 + (a - 1.15) * 0.62);
+  }
+  function lift(L, c, x, y) {          // where an image point lands after the boost
+    var k = L.k || 1, bx = L.box[0] + L.box[2] / 2, by = L.box[1] + L.box[3];
+    return [c.ox + (bx + (x - bx) * k) * c.s, c.oy + (by + (y - by) * k) * c.s];
+  }
   function place() {
     var c = cover();
     LANDMARKS.forEach(function (L) {
       var b = L.box, st = L.el.style;
       st.left = (c.ox + b[0] * c.s) + "px"; st.top = (c.oy + b[1] * c.s) + "px";
       st.width = (b[2] * c.s) + "px"; st.height = (b[3] * c.s) + "px";
-      var tx = c.ox + L.tagAt[0] * c.s, ty = c.oy + L.tagAt[1] * c.s;
+      L.k = boost(L, c);
+      st.transformOrigin = "50% 100%"; st.transform = L.k === 1 ? "" : "scale(" + L.k + ")";
+      var tp = lift(L, c, L.tagAt[0], L.tagAt[1]), tx = tp[0], ty = tp[1];
       L.tag.style.left = tx + "px"; L.tag.style.top = ty + "px";
       var inside = tx > 20 && tx < c.W - 20 && ty > 70 && ty < c.H - 20;
       L.tag.classList.toggle("off", !inside);
@@ -264,9 +277,9 @@
   // Galata: the camera flies toward one of the arched windows, then the window opens up and takes us through
   function dive(L) {
     var c = cover(), scene = document.querySelector(".scene");
-    var px = c.ox + L.dive[0] * c.s, py = c.oy + L.dive[1] * c.s;          // window centre on screen
-    var ww = 24 * c.s, wh = 50 * c.s;                                       // window opening size on screen
-    var S = 7, T1 = 1500, cx = c.W / 2, cy = c.H / 2;
+    var wp = lift(L, c, L.dive[0], L.dive[1]), px = wp[0], py = wp[1];     // window centre on screen
+    var ww = 24 * c.s * (L.k || 1), wh = 50 * c.s * (L.k || 1);                                       // window opening size on screen
+    var S = 7 / (L.k || 1), T1 = 1500, cx = c.W / 2, cy = c.H / 2;
     hero.classList.add("diving");
     scene.style.transformOrigin = "0 0";
     function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
