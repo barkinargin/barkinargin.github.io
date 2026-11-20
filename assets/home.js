@@ -9,7 +9,7 @@
   "use strict";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var root = document.documentElement, hero = document.querySelector(".hero");
-  var IMG = { w: 3000, h: 1858, pad: 170, ax: 0.5, ay: 1 };   // 170px of extra sky on top; anchored to the bottom   // matches the photo's object-fit: cover; object-position: 50% 50%
+  var IMG = { w: 3000, h: 1688, pad: 170, ax: 0.5, zoom: 1.04, drop: 0.075 };   // photo + 170px of added sky on top   // matches the photo's object-fit: cover; object-position: 50% 50%
 
   // ------------------------------------------------------------ landmarks (image coordinates)
   var LANDMARKS = [
@@ -158,11 +158,17 @@
   }
 
   var layer = document.getElementById("landmarks");
+  // The city keeps its full size (a touch closer), slides down by `drop` of the screen height and is cropped at the
+  // bottom; the added sky fills the space that opens at the top. Every layer uses this one mapping.
   function cover() {
-    var W = hero.clientWidth, H = hero.clientHeight, s = Math.max(W / IMG.w, H / IMG.h);
+    var W = hero.clientWidth, H = hero.clientHeight;
     IMG.ax = W / H < 1.15 ? 0.1 : 0.5;                 // narrow screens: keep Istanbul and London in view
-    hero.style.setProperty("--ax", (IMG.ax * 100) + "%");
-    return { s: s, ox: (W - IMG.w * s) * IMG.ax, oy: (H - IMG.h * s) * IMG.ay + IMG.pad * s, W: W, H: H };
+    var s = Math.max(W / IMG.w, H / IMG.h) * IMG.zoom;
+    var drop = Math.min(H * IMG.drop, IMG.pad * s - 2);
+    var ox = (W - IMG.w * s) * IMG.ax, oy = drop;     // where the photo's own top edge lands
+    var img = document.querySelector(".city");
+    if (img) { var st = img.style; st.width = IMG.w * s + "px"; st.height = (IMG.h + IMG.pad) * s + "px"; st.left = ox + "px"; st.top = (oy - IMG.pad * s) + "px"; }
+    return { s: s, ox: ox, oy: oy, W: W, H: H };
   }
   function pct(v, of) { return (v / of * 100) + "%"; }
 
@@ -310,12 +316,10 @@
   // ------------------------------------------------------------ moving river (WebGL)
   var RIVER = [
     "precision mediump float;",
-    "uniform sampler2D uImg, uMask; uniform vec2 uRes, uImgSize, uAnchor; uniform float uT;",
+    "uniform sampler2D uImg, uMask; uniform vec2 uRes, uOff, uDisp; uniform float uT;",
     "void main(){",
     "  vec2 p = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y);",
-    "  float s = max(uRes.x / uImgSize.x, uRes.y / uImgSize.y);",
-    "  vec2 disp = uImgSize * s; vec2 off = (uRes - disp) * uAnchor;",
-    "  vec2 uv = (p - off) / disp;",
+    "  vec2 uv = (p - uOff) / uDisp;",
     "  float m = texture2D(uMask, uv).r;",
     "  float depth = mix(0.3, 1.0, clamp((uv.y - 0.3) / 0.6, 0.0, 1.0));",
     "  vec2 q = uv * vec2(1.0, 1.8);",
@@ -351,8 +355,7 @@
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       });
       gl.uniform1i(gl.getUniformLocation(p, "uImg"), 0); gl.uniform1i(gl.getUniformLocation(p, "uMask"), 1);
-      gl.uniform2f(gl.getUniformLocation(p, "uImgSize"), imgs[0].naturalWidth, imgs[0].naturalHeight);
-      var uAnchor = gl.getUniformLocation(p, "uAnchor");
+            var uOff = gl.getUniformLocation(p, "uOff"), uDisp = gl.getUniformLocation(p, "uDisp");
       var uRes = gl.getUniformLocation(p, "uRes"), uT = gl.getUniformLocation(p, "uT");
       root.classList.add("gl");
       var visible = true, t0 = performance.now();
@@ -362,7 +365,7 @@
         if (!visible || document.hidden) return;
         var w = Math.round(canvas.clientWidth * dpr), h = Math.round(canvas.clientHeight * dpr);
         if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
-        gl.viewport(0, 0, w, h); gl.uniform2f(uRes, w, h); gl.uniform2f(uAnchor, IMG.ax, IMG.ay); gl.uniform1f(uT, (now - t0) / 1000);
+        gl.viewport(0, 0, w, h); gl.uniform2f(uRes, w, h); var cv = cover(); gl.uniform2f(uOff, cv.ox * dpr, (cv.oy - IMG.pad * cv.s) * dpr); gl.uniform2f(uDisp, IMG.w * cv.s * dpr, (IMG.h + IMG.pad) * cv.s * dpr); gl.uniform1f(uT, (now - t0) / 1000);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       })(t0);
     }).catch(function () {});
