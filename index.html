@@ -53,7 +53,7 @@ a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   opacity: 0; transition: opacity 1s ease 0.2s; }
 .i-done .topbar { opacity: 1; }
 .topbar .name { font-family: var(--display); font-size: 22px; letter-spacing: 0; font-weight: 700; text-decoration: none; }
-.topbar nav { display: flex; gap: 22px; }
+.topbar nav { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); display: flex; gap: 26px; }
 .topbar nav a { text-decoration: none; opacity: 0.85; }
 .topbar nav a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
 
@@ -228,7 +228,7 @@ footer { font-size: 13px; color: var(--muted); }
 
   <div class="copy">
     <h1 class="l1"><span class="p1">Born in <em>Istanbul</em>.</span> <span class="p2">Blended in <em>London</em>.</span> <span class="p3">Building in <em>Los Angeles</em>.</span></h1>
-    <p class="l2">I'm Barkın. Everything here started in one of these cities.</p>
+    <p class="l2">I'm Barkın. A little of each city goes into everything I build.</p>
     <p class="hint">Click a landmark to open a product</p>
     <nav class="pills" aria-label="Products">
       <a href="/sport/"><span>Istanbul</span>Dispatch Sport</a>
