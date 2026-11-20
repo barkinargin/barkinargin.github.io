@@ -53,7 +53,7 @@ a:focus-visible { outline: 3px solid #1b1e23; outline-offset: 4px; border-radius
 .topbar a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
 
 /* ---------------- phone ---------------- */
-.stage { --w: clamp(320px, 31vw, 480px); --top: 38%; --waterline: calc(var(--top) + var(--w) * 0.865);
+.stage { --w: clamp(320px, 31vw, 480px); --top: 40%; --waterline: calc(var(--top) + var(--w) * 0.865);
   position: absolute; inset: 0; perspective: 1400px; z-index: 1; pointer-events: none; }
 .halo { position: absolute; left: 50%; top: var(--waterline); width: 70vw; height: 70vw; max-width: 1100px; max-height: 1100px; transform: translate(-50%, -55%);
   background: radial-gradient(closest-side, rgba(255,255,255,0.7), rgba(255,255,255,0.18) 45%, rgba(255,255,255,0) 70%);
@@ -202,7 +202,17 @@ a.app:focus-visible { outline: none; }
   transform: translateY(-3%) scale(1.08); filter: drop-shadow(0 24px 28px rgba(0,0,0,0.55)) brightness(1.1) contrast(1.05); }
 .landmark.on::before, .landmark.hint::before { opacity: 1; }
 .landmark.on .lm-label { opacity: 1; transform: translate(-50%, -16px); }
-@media (prefers-reduced-motion: reduce) { .lm-img, .lm-label { transition: none; } }
+/* Tower Bridge bascules */
+.bridge .part { position: absolute; display: block; pointer-events: none; }
+.tb-leaf-l, .tb-leaf-r { transition: transform 1.35s cubic-bezier(.55,0,.25,1), filter 0.6s ease; will-change: transform; }
+.tb-leaf-l { transform-origin: 2% 80%; }
+.tb-leaf-r { transform-origin: 98% 80%; }
+.bridge.on .tb-leaf-l { transform: rotate(-7deg); transition-duration: 0.5s; }
+.bridge.on .tb-leaf-r { transform: rotate(7deg); transition-duration: 0.5s; }
+.bridge.open .tb-leaf-l { transform: rotate(-76deg); filter: drop-shadow(-4px 10px 8px rgba(0,0,0,0.45)); }
+.bridge.open .tb-leaf-r { transform: rotate(76deg); filter: drop-shadow(4px 10px 8px rgba(0,0,0,0.45)); }
+.bridge .lm-label { bottom: 104%; }
+@media (prefers-reduced-motion: reduce) { .lm-img, .lm-label, .tb-leaf-l, .tb-leaf-r { transition: none; } }
 
 /* ---------------- app launch ---------------- */
 .launch { position: fixed; z-index: 1000; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.35);
@@ -375,6 +385,6 @@ footer { font-size: 13px; color: var(--muted); }
   }).catch(function () {});
 })();
 </script>
-<script src="/assets/home.js?v=1795146193" defer></script>
+<script src="/assets/home.js?v=1795148187" defer></script>
 </body>
 </html>

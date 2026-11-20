@@ -142,10 +142,41 @@
       box: [333, 492, 312, 905],
       poly: "49.04% 0.44%, 52.88% 4.2%, 52.88% 6.74%, 51.6% 8.84%, 64.74% 20.77%, 79.17% 31.82%, 87.18% 35.36%, 92.31% 36.91%, 89.1% 37.68%, 89.74% 44.53%, 98.72% 45.64%, 97.44% 47.85%, 94.87% 48.95%, 94.87% 57.79%, 98.72% 58.56%, 97.44% 60.77%, 93.27% 61.66%, 92.95% 99.45%, 85.58% 99.56%, 61.54% 95.47%, 3.85% 91.38%, 5.45% 89.28%, 5.45% 61.22%, 1.28% 60.55%, 1.92% 58.34%, 4.49% 57.46%, 4.49% 49.06%, 1.92% 46.3%, 3.85% 45.08%, 9.94% 44.53%, 9.94% 37.68%, 7.69% 36.91%, 12.5% 35.69%, 23.72% 31.82%, 35.9% 20.77%, 46.79% 8.84%, 45.51% 6.74%, 45.51% 4.2%" }
   ];
+  // Tower Bridge: the two deck leaves lift like a bascule when clicked, then the page opens
+  var BRIDGE = { id: "towerbridge", name: "Tower Bridge", label: "Sport", href: "/sport/", bg: "#000000",
+    box: [915, 503, 300, 197],
+    parts: [ { cls: "tb-gap",    src: "/assets/lm/tb-gap.webp",    box: [978, 632, 157, 35] },
+             { cls: "tb-leaf-l", src: "/assets/lm/tb-leaf-l.webp", box: [980, 633, 78, 31] },
+             { cls: "tb-leaf-r", src: "/assets/lm/tb-leaf-r.webp", box: [1054, 633, 79, 32] } ] };
   var layer = document.getElementById("landmarks"), hero = document.querySelector(".hero");
+  function buildBridge() {
+    if (!layer) return;
+    var B = BRIDGE, el = document.createElement("div");
+    el.className = "landmark bridge"; el.dataset.id = B.id;
+    var html = "";
+    B.parts.forEach(function (p) {
+      html += '<img class="part ' + p.cls + '" alt="" src="' + p.src + '" style="left:' + ((p.box[0] - B.box[0]) / B.box[2] * 100) + '%;top:' +
+        ((p.box[1] - B.box[1]) / B.box[3] * 100) + '%;width:' + (p.box[2] / B.box[2] * 100) + '%;height:' + (p.box[3] / B.box[3] * 100) + '%">';
+    });
+    html += '<a class="lm-hit" href="' + B.href + '" aria-label="' + B.name + ': open ' + B.label + '"></a>' +
+      '<span class="lm-label" aria-hidden="true"><small>' + B.name + '</small><b>' + B.label + ' \u2192</b></span>';
+    el.innerHTML = html; layer.appendChild(el); B.el = el;
+    var hit = el.querySelector(".lm-hit");
+    ["mouseenter", "focus"].forEach(function (ev) { hit.addEventListener(ev, function () { el.classList.add("on"); }); });
+    ["mouseleave", "blur"].forEach(function (ev) { hit.addEventListener(ev, function () { el.classList.remove("on"); }); });
+    hit.addEventListener("click", function (e) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      if (reduce) { window.location.href = B.href; return; }
+      el.classList.add("open");                       // leaves lift
+      setTimeout(function () { grow(el.getBoundingClientRect(), B.bg, B.href, "0"); }, 1700);
+    });
+    LANDMARKS.push(B);
+  }
   function buildLandmarks() {
     if (!layer) return;
     LANDMARKS.forEach(function (L) {
+      if (L.el) return;
       var el = document.createElement("div");
       el.className = "landmark"; el.dataset.id = L.id;
       el.innerHTML = '<img class="lm-img" alt="" src="' + L.src + '">' +
@@ -172,9 +203,18 @@
       st.width = (b[2] * s) + "px"; st.height = (b[3] * s) + "px";
     });
   }
+  buildBridge();
   buildLandmarks();
 
   // ------------------------------------------------------------ app launch transition
+  function grow(r, bg, href, radius) {
+    var ov = document.createElement("div");
+    ov.className = "launch";
+    ov.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px;border-radius:" + radius + ";background:" + bg;
+    document.body.appendChild(ov);
+    ov.getBoundingClientRect(); ov.classList.add("open");
+    setTimeout(function () { window.location.href = href; }, 560);
+  }
   function launch(e) {
     var a = e.currentTarget;
     if (reduce || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
@@ -196,9 +236,10 @@
     ov.classList.add("open");
     setTimeout(function () { window.location.href = a.href; }, 560);
   }
-  document.querySelectorAll("a.app, a.lm-hit").forEach(function (a) { a.addEventListener("click", launch); });
+  document.querySelectorAll("a.app, .landmark:not(.bridge) a.lm-hit").forEach(function (a) { a.addEventListener("click", launch); });
   window.addEventListener("pageshow", function (e) {   // coming back: clean up
     document.querySelectorAll(".launch").forEach(function (n) { n.remove(); });
+    document.querySelectorAll(".bridge.open").forEach(function (n) { n.classList.remove("open"); });
     document.querySelectorAll("a.app .icon, .lm-img").forEach(function (n) { n.style.visibility = ""; });
   });
 
