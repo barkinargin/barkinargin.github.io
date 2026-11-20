@@ -327,7 +327,7 @@
   // ------------------------------------------------------------ moving river (WebGL)
   var RIVER = [
     "precision mediump float;",
-    "uniform sampler2D uImg, uMask; uniform vec2 uRes, uOff, uDisp; uniform float uT;",
+    "uniform sampler2D uImg, uMask, uSky, uSkyMask; uniform vec2 uRes, uOff, uDisp; uniform float uT, uSkyH;",
     "void main(){",
     "  vec2 p = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y);",
     "  vec2 uv = (p - uOff) / uDisp;",
@@ -342,6 +342,14 @@
     "  vec3 c = texture2D(uImg, uv + d).rgb;",
     "  c *= 1.0 + sw * 0.045 * m * depth;",
     "  c += pow(max(0.0, w1 * 0.5 + w3 * 0.5), 5.0) * 0.14 * m * depth * vec3(1.0, 0.92, 0.8);",
+    "  if (uv.y < uSkyH) {",                                         // drifting clouds
+    "    vec2 su = vec2(uv.x, uv.y / uSkyH);",
+    "    float sm = texture2D(uSkyMask, su).r;",
+    "    if (sm > 0.0) {",
+    "      vec2 sp = vec2(fract(su.x + uT * 0.0019 + sin(su.y * 9.0 + uT * 0.05) * 0.002), su.y);",
+    "      c = mix(c, texture2D(uSky, sp).rgb, sm);",
+    "    }",
+    "  }",
     "  gl_FragColor = vec4(c, 1.0);",
     "}"].join("\n");
   function river() {
@@ -351,7 +359,7 @@
     if (!gl) return;
     var small = window.innerWidth < 900, dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     function load(src) { return new Promise(function (ok, bad) { var i = new Image(); i.onload = function () { ok(i); }; i.onerror = bad; i.src = src; }); }
-    Promise.all([load(small ? "/assets/city-1600-a3a5090.jpg" : "/assets/city-a3a5090.jpg"), load("/assets/water-mask-a3a5090.png")]).then(function (imgs) {
+    Promise.all([load(small ? "/assets/city-1600-a3a5090.jpg" : "/assets/city-a3a5090.jpg"), load("/assets/water-mask-a3a5090.png"), load("/assets/sky-plate-3ffd0fc.jpg"), load("/assets/sky-mask-3ffd0fc.png")]).then(function (imgs) {
       function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
       var p = gl.createProgram();
       gl.attachShader(p, sh(gl.VERTEX_SHADER, "attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }"));
@@ -366,6 +374,8 @@
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       });
       gl.uniform1i(gl.getUniformLocation(p, "uImg"), 0); gl.uniform1i(gl.getUniformLocation(p, "uMask"), 1);
+      gl.uniform1i(gl.getUniformLocation(p, "uSky"), 2); gl.uniform1i(gl.getUniformLocation(p, "uSkyMask"), 3);
+      gl.uniform1f(gl.getUniformLocation(p, "uSkyH"), 780 / 2038);
             var uOff = gl.getUniformLocation(p, "uOff"), uDisp = gl.getUniformLocation(p, "uDisp");
       var uRes = gl.getUniformLocation(p, "uRes"), uT = gl.getUniformLocation(p, "uT");
       root.classList.add("gl");
