@@ -16,10 +16,10 @@
     {
       "id": "galata",
       "name": "Galata Tower",
-      "product": "The Morning Dispatch",
-      "line": "AI, tech & markets every morning",
-      "href": "/dispatch/",
-      "bg": "#f2f3f0",
+      "product": "Dispatch Sport",
+      "line": "sport the way we used to follow it",
+      "href": "/sport/",
+      "bg": "#000000",
       "src": "/assets/lm/galata.webp",
       "box": [
         192,
@@ -35,15 +35,21 @@
       "dive": [
         389,
         1062
+      ],
+      "note": [
+        "Galata is pure nostalgia for me.",
+        "So is teletext.",
+        "Step back in time and follow sport",
+        "the way we used to: page by page."
       ]
     },
     {
       "id": "towerbridge",
       "name": "Tower Bridge",
-      "product": "Dispatch Sport",
-      "line": "scores on a teletext screen",
-      "href": "/sport/",
-      "bg": "#000000",
+      "product": "The Morning Dispatch",
+      "line": "AI, tech & markets every morning",
+      "href": "/dispatch/",
+      "bg": "#f2f3f0",
       "box": [
         975,
         340,
@@ -157,6 +163,13 @@
       tag.className = "tag" + (L.href ? "" : " soon");
       if (L.href) { tag.href = L.href; tag.setAttribute("aria-label", L.product + ", at " + L.name); }
       tag.innerHTML = '<i class="dot" aria-hidden="true"></i><span class="tx"><b>' + L.product + '</b><small>' + L.name + " · " + L.line + "</small></span>";
+      if (L.note) {
+        tag.classList.add("has-note");
+        tag.insertAdjacentHTML("beforeend", '<span class="ttx-card" aria-hidden="true"><span class="ttx-head"><span>P300</span><span>SPORT</span><span class="ttx-clock">' +
+          new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) + '</span></span><span class="ttx-band">GALATA · NOSTALGIA</span>' +
+          L.note.map(function (n, i) { return '<span class="ttx-line c' + (i % 3) + '">' + n + "</span>"; }).join("") +
+          '<span class="ttx-fast"><i></i><i></i><i></i><i></i></span></span>');
+      }
       layer.appendChild(tag);
       L.el = el; L.tag = tag;
       if (L.spin) el.style.setProperty("--k", L.spin);
@@ -218,25 +231,39 @@
     L.el.classList.add("leaving");
     grow(img.getBoundingClientRect(), L.bg, L.href, img);
   }
-  // Galata: the camera flies into one of the arched windows
+  // Galata: the camera flies toward one of the arched windows, then the window opens up and takes us through
   function dive(L) {
     var c = cover(), scene = document.querySelector(".scene");
-    var x = c.ox + L.dive[0] * c.s, y = c.oy + L.dive[1] * c.s;
-    scene.style.transformOrigin = x + "px " + y + "px";
+    var px = c.ox + L.dive[0] * c.s, py = c.oy + L.dive[1] * c.s;          // window centre on screen
+    var ww = 24 * c.s, wh = 50 * c.s;                                       // window opening size on screen
+    var S = 7, T1 = 1500, cx = c.W / 2, cy = c.H / 2;
     hero.classList.add("diving");
-    scene.getBoundingClientRect();
-    scene.classList.add("dive");   // fly the window to the centre of the screen while zooming in
-    scene.style.translate = (c.W / 2 - x) + "px " + (c.H / 2 - y) + "px"; scene.style.scale = "30";
-    var fade = document.createElement("div"); fade.className = "dive-fade";
-    fade.style.setProperty("--x", x + "px"); fade.style.setProperty("--y", y + "px");
-    document.body.appendChild(fade);
-    setTimeout(function () { fade.classList.add("dark"); }, 1800);
-    setTimeout(function () { fade.classList.add("light"); }, 2200);
-    setTimeout(function () { window.location.href = L.href; }, 2550);
+    scene.style.transformOrigin = "0 0";
+    function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+    var t0 = performance.now(), portal = null;
+    (function step(now) {
+      var t = Math.min(1, (now - t0) / T1), e = ease(t);
+      var s = Math.exp(Math.log(S) * e);                                   // constant-feeling zoom speed
+      var sx = px + (cx - px) * e, sy = py + (cy - py) * e;                 // the window glides to the centre
+      scene.style.transform = "translate(" + (sx - px * s) + "px," + (sy - py * s) + "px) scale(" + s + ")";
+      if (t < 1) { requestAnimationFrame(step); return; }
+      // the window opening becomes the doorway
+      portal = document.createElement("div");
+      portal.className = "portal";
+      var w = ww * S, h = wh * S;
+      portal.style.cssText = "left:" + (cx - w / 2) + "px;top:" + (cy - h / 2) + "px;width:" + w + "px;height:" + h + "px;background:" + L.bg;
+      portal.innerHTML = '<span class="portal-ttx">P300</span>';
+      document.body.appendChild(portal);
+      portal.getBoundingClientRect();
+      portal.classList.add("open");
+      scene.classList.add("through");
+      setTimeout(function () { window.location.href = L.href; }, 700);
+    })(t0);
   }
   window.addEventListener("pageshow", function () {
     document.querySelectorAll(".dive-fade").forEach(function (n) { n.remove(); });
-    var sc = document.querySelector(".scene"); if (sc) { sc.classList.remove("dive"); sc.style.translate = ""; sc.style.scale = ""; } hero.classList.remove("diving");
+    var sc = document.querySelector(".scene"); if (sc) { sc.classList.remove("dive", "through"); sc.style.transform = ""; }
+    document.querySelectorAll(".portal").forEach(function (n) { n.remove(); }); hero.classList.remove("diving");
     document.querySelectorAll(".launch").forEach(function (n) { n.remove(); });
     LANDMARKS.forEach(function (L) { if (L.el) L.el.classList.remove("open", "leaving", "on", "spinning"); if (L.tag) L.tag.classList.remove("on"); });
   });

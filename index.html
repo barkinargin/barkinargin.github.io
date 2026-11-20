@@ -7,7 +7,7 @@
 <meta name="description" content="Born in Istanbul. Blended in London. Building in Los Angeles. Products by Barkın: The Morning Dispatch, Dispatch Sport, and a Bay Area parking app.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=VT323&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="/assets/city.jpg" imagesrcset="/assets/city-1600.jpg 1600w, /assets/city.jpg 3000w" imagesizes="100vw">
 <style>
 /* Layout: one full-screen city (Istanbul | London | Los Angeles) that is also the menu. An opener reveals the
@@ -126,14 +126,35 @@ a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 .bridge.open .tb-leaf-r { transform: rotate(78deg); filter: drop-shadow(3px 8px 6px rgba(0,0,0,0.45)); }
 
 /* camera dive into Galata */
-.scene { position: absolute; inset: 0; z-index: -1; }
-.scene.dive { transition: translate 1.5s cubic-bezier(.45,0,.2,1), scale 2.3s cubic-bezier(.6,0,.85,.35), filter 2.3s ease-in; filter: blur(1px); }
+.scene { position: absolute; inset: 0; z-index: -1; will-change: transform; }
+.scene.through { transition: filter 0.6s ease, opacity 0.6s ease; filter: blur(6px) brightness(0.6); }
 .diving .tag, .diving .copy, .diving .topbar, .diving .skip { opacity: 0 !important; transition: opacity 0.4s ease !important; }
-.diving .landmark.on .lm-img { transform: none; filter: none; }
-.dive-fade { position: fixed; inset: 0; z-index: 1000; pointer-events: none; opacity: 0;
-  background: radial-gradient(circle at var(--x) var(--y), rgba(8,8,10,0.2), #08080a 30%); transition: opacity 0.45s ease; }
-.dive-fade.dark { opacity: 1; }
-.dive-fade.light { background: var(--paper); transition: background 0.35s ease; }
+.diving .landmark.on .lm-img, .diving .landmark.on::before { transform: none; filter: none; opacity: 0; }
+.diving .landmark .lm-img { transition: none; }
+.portal { position: fixed; z-index: 1000; overflow: hidden; border-radius: 50% 50% 4% 4% / 32% 32% 3% 3%;
+  box-shadow: 0 0 0 2px rgba(255,214,150,0.35), 0 0 60px rgba(255,214,150,0.4);
+  transition: left 0.65s cubic-bezier(.5,0,.2,1), top 0.65s cubic-bezier(.5,0,.2,1), width 0.65s cubic-bezier(.5,0,.2,1),
+              height 0.65s cubic-bezier(.5,0,.2,1), border-radius 0.65s ease; display: grid; place-items: center; }
+.portal.open { left: -5vw !important; top: -5vh !important; width: 110vw !important; height: 110vh !important; border-radius: 0; }
+.portal-ttx { font-family: "VT323", ui-monospace, monospace; color: #ff0; font-size: 28px; opacity: 0; transition: opacity 0.3s ease 0.3s; }
+.portal.open .portal-ttx { opacity: 1; }
+
+/* Galata's teletext card */
+.tag.has-note { overflow: visible; }
+.ttx-card { position: absolute; left: calc(100% + 12px); top: 0; display: grid; gap: 1px; width: max-content; max-width: 360px; padding: 9px 12px 11px; white-space: normal;
+  font-family: "VT323", ui-monospace, monospace; background: #000; color: #fff; border-radius: 8px; box-shadow: 0 18px 50px rgba(0,0,0,0.5);
+  opacity: 0; transform: translateX(-8px) scale(0.97); transform-origin: 0 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.4s cubic-bezier(.34,1.45,.64,1); }
+.tag.has-note.on { background: #000; color: #fff; border-radius: 14px; }
+.tag.has-note.on .dot { background: #ff0; }
+.tag.has-note.on .ttx-card { opacity: 1; transform: none; }
+.ttx-head { display: flex; justify-content: space-between; color: #fff; font-size: 17px; }
+.ttx-head span:first-child, .ttx-clock { color: #ff0; }
+.ttx-band { background: #1010e0; color: #ff0; font-size: 18px; padding: 0 6px; margin: 4px 0 6px; letter-spacing: 0.04em; }
+.ttx-line { font-size: 20px; line-height: 1.05; white-space: normal; }
+.ttx-line.c0 { color: #0ff; } .ttx-line.c1 { color: #fff; } .ttx-line.c2 { color: #0f0; }
+.ttx-fast { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 8px; }
+.ttx-fast i { height: 6px; } .ttx-fast i:nth-child(1) { background: #ff3b30; } .ttx-fast i:nth-child(2) { background: #00f000; }
+.ttx-fast i:nth-child(3) { background: #ff0; } .ttx-fast i:nth-child(4) { background: #0ff; }
 
 /* London Eye spins up */
 .landmark.spinning .lm-img { animation: spin 1.5s cubic-bezier(.5,0,.75,0) forwards; transform-origin: 50% 50%; }
@@ -205,8 +226,8 @@ footer { font-size: 13px; color: var(--muted); }
     <p class="l2">I'm Barkın. Everything here started in one of these cities.</p>
     <p class="hint">Click a landmark to open a product</p>
     <nav class="pills" aria-label="Products">
-      <a href="/dispatch/"><span>Istanbul</span>The Morning Dispatch</a>
-      <a href="/sport/"><span>London</span>Dispatch Sport</a>
+      <a href="/sport/"><span>Istanbul</span>Dispatch Sport</a>
+      <a href="/dispatch/"><span>London</span>The Morning Dispatch</a>
       <a href="/parking/"><span>Los Angeles</span>Parking</a>
     </nav>
   </div>
@@ -222,7 +243,7 @@ footer { font-size: 13px; color: var(--muted); }
         <div>
           <h3>The Morning Dispatch</h3>
           <p>A daily front page for AI &amp; tech and finance, rebuilt automatically every morning from news feeds and market data.</p>
-          <span class="status-t">Live · new edition daily · Galata Tower</span>
+          <span class="status-t">Live · new edition daily · Tower Bridge</span>
         </div>
         <span class="tag-t">Python · GitHub Actions · Claude</span>
       </a>
@@ -231,7 +252,7 @@ footer { font-size: 13px; color: var(--muted); }
         <div>
           <h3>Dispatch Sport</h3>
           <p>Süper Lig, European football, NFL and tennis on a teletext screen: page numbers, block graphics and the coloured buttons, with live tables and scores.</p>
-          <span class="status-t">Live · updated daily · Tower Bridge</span>
+          <span class="status-t">Live · updated daily · Galata Tower</span>
         </div>
         <span class="tag-t">ESPN data · Teletext</span>
       </a>
@@ -266,6 +287,6 @@ footer { font-size: 13px; color: var(--muted); }
   <footer>Built with Claude. Hosted on GitHub Pages.</footer>
 </div>
 
-<script src="/assets/home.js?v=1795149752" defer></script>
+<script src="/assets/home.js?v=1795150435" defer></script>
 </body>
 </html>
