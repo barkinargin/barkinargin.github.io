@@ -32,8 +32,8 @@ a { color: inherit; }
 a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
 /* ---------------- hero ---------------- */
-.hero { position: relative; height: max(640px, 100svh); overflow: hidden; background: var(--night) url("/assets/city-1600.jpg") var(--ax, 50%) 50% / cover; color: var(--ink); isolation: isolate; }
-.city, .river { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--ax, 50%) 50%; }
+.hero { position: relative; height: max(640px, 100svh); overflow: hidden; background: var(--night) url("/assets/city-1600.jpg") var(--ax, 50%) 100% / cover; color: var(--ink); isolation: isolate; }
+.city, .river { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--ax, 50%) 100%; }
 .city { z-index: -4; }
 .river { z-index: -3; opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
 .gl .river { opacity: 1; }
@@ -292,6 +292,6 @@ footer { font-size: 13px; color: var(--muted); }
   <footer>Built with Claude. Hosted on GitHub Pages.</footer>
 </div>
 
-<script src="/assets/home.js?v=1795151382" defer></script>
+<script src="/assets/home.js?v=1795152845" defer></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
   "use strict";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var root = document.documentElement, hero = document.querySelector(".hero");
-  var IMG = { w: 3000, h: 1688, ax: 0.5, ay: 0.5 };   // matches the photo's object-fit: cover; object-position: 50% 50%
+  var IMG = { w: 3000, h: 1858, pad: 170, ax: 0.5, ay: 1 };   // 170px of extra sky on top; anchored to the bottom   // matches the photo's object-fit: cover; object-position: 50% 50%
 
   // ------------------------------------------------------------ landmarks (image coordinates)
   var LANDMARKS = [
@@ -162,7 +162,7 @@
     var W = hero.clientWidth, H = hero.clientHeight, s = Math.max(W / IMG.w, H / IMG.h);
     IMG.ax = W / H < 1.15 ? 0.1 : 0.5;                 // narrow screens: keep Istanbul and London in view
     hero.style.setProperty("--ax", (IMG.ax * 100) + "%");
-    return { s: s, ox: (W - IMG.w * s) * IMG.ax, oy: (H - IMG.h * s) * IMG.ay, W: W, H: H };
+    return { s: s, ox: (W - IMG.w * s) * IMG.ax, oy: (H - IMG.h * s) * IMG.ay + IMG.pad * s, W: W, H: H };
   }
   function pct(v, of) { return (v / of * 100) + "%"; }
 
