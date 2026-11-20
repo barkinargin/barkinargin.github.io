@@ -340,7 +340,7 @@
     if (!gl) return;
     var small = window.innerWidth < 900, dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     function load(src) { return new Promise(function (ok, bad) { var i = new Image(); i.onload = function () { ok(i); }; i.onerror = bad; i.src = src; }); }
-    Promise.all([load(small ? "/assets/city-1600.jpg" : "/assets/city.jpg"), load("/assets/water-mask.png")]).then(function (imgs) {
+    Promise.all([load(small ? "/assets/city-1600-a3a5090.jpg" : "/assets/city-a3a5090.jpg"), load("/assets/water-mask-a3a5090.png")]).then(function (imgs) {
       function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
       var p = gl.createProgram();
       gl.attachShader(p, sh(gl.VERTEX_SHADER, "attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }"));
