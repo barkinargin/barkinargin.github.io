@@ -138,6 +138,8 @@
   var layer = document.getElementById("landmarks");
   function cover() {
     var W = hero.clientWidth, H = hero.clientHeight, s = Math.max(W / IMG.w, H / IMG.h);
+    IMG.ax = W / H < 1.15 ? 0.1 : 0.5;                 // narrow screens: keep Istanbul and London in view
+    hero.style.setProperty("--ax", (IMG.ax * 100) + "%");
     return { s: s, ox: (W - IMG.w * s) * IMG.ax, oy: (H - IMG.h * s) * IMG.ay, W: W, H: H };
   }
   function pct(v, of) { return (v / of * 100) + "%"; }
@@ -328,7 +330,7 @@
       });
       gl.uniform1i(gl.getUniformLocation(p, "uImg"), 0); gl.uniform1i(gl.getUniformLocation(p, "uMask"), 1);
       gl.uniform2f(gl.getUniformLocation(p, "uImgSize"), imgs[0].naturalWidth, imgs[0].naturalHeight);
-      gl.uniform2f(gl.getUniformLocation(p, "uAnchor"), IMG.ax, IMG.ay);
+      var uAnchor = gl.getUniformLocation(p, "uAnchor");
       var uRes = gl.getUniformLocation(p, "uRes"), uT = gl.getUniformLocation(p, "uT");
       root.classList.add("gl");
       var visible = true, t0 = performance.now();
@@ -338,7 +340,7 @@
         if (!visible || document.hidden) return;
         var w = Math.round(canvas.clientWidth * dpr), h = Math.round(canvas.clientHeight * dpr);
         if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
-        gl.viewport(0, 0, w, h); gl.uniform2f(uRes, w, h); gl.uniform1f(uT, (now - t0) / 1000);
+        gl.viewport(0, 0, w, h); gl.uniform2f(uRes, w, h); gl.uniform2f(uAnchor, IMG.ax, IMG.ay); gl.uniform1f(uT, (now - t0) / 1000);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       })(t0);
     }).catch(function () {});
