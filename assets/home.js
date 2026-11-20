@@ -31,6 +31,10 @@
       "tagAt": [
         372,
         474
+      ],
+      "dive": [
+        389,
+        1062
       ]
     },
     {
@@ -84,6 +88,26 @@
       ]
     },
     {
+      "id": "eye",
+      "name": "London Eye",
+      "product": "Project 04",
+      "line": "next one is in the works",
+      "href": "/next/",
+      "bg": "#f4f2ee",
+      "src": "/assets/lm/eye.webp",
+      "box": [
+        1806,
+        255,
+        132,
+        202
+      ],
+      "spin": 0.6428571428571429,
+      "tagAt": [
+        1872,
+        262
+      ]
+    },
+    {
       "id": "griffith",
       "name": "Griffith Observatory",
       "product": "Find Me a Parking Spot",
@@ -101,23 +125,6 @@
       "tagAt": [
         2808,
         372
-      ]
-    },
-    {
-      "id": "bosphorus",
-      "name": "Bosphorus Bridge",
-      "product": "Coming soon",
-      "line": "the next project",
-      "href": null,
-      "box": [
-        360,
-        300,
-        380,
-        140
-      ],
-      "tagAt": [
-        548,
-        318
       ]
     }
   ];
@@ -152,6 +159,7 @@
       tag.innerHTML = '<i class="dot" aria-hidden="true"></i><span class="tx"><b>' + L.product + '</b><small>' + L.name + " · " + L.line + "</small></span>";
       layer.appendChild(tag);
       L.el = el; L.tag = tag;
+      if (L.spin) el.style.setProperty("--k", L.spin);
 
       function on() { el.classList.add("on"); tag.classList.add("on"); }
       function off() { el.classList.remove("on"); tag.classList.remove("on"); }
@@ -200,13 +208,37 @@
       setTimeout(function () { grow(L.el.getBoundingClientRect(), L.bg, L.href); }, 1700);
       return;
     }
+    if (L.dive) { dive(L); return; }
+    if (L.spin) {
+      L.el.classList.add("spinning");
+      setTimeout(function () { grow(L.el.getBoundingClientRect(), L.bg, L.href); }, 1500);
+      return;
+    }
     var img = L.el.querySelector(".lm-img");
     L.el.classList.add("leaving");
     grow(img.getBoundingClientRect(), L.bg, L.href, img);
   }
+  // Galata: the camera flies into one of the arched windows
+  function dive(L) {
+    var c = cover(), scene = document.querySelector(".scene");
+    var x = c.ox + L.dive[0] * c.s, y = c.oy + L.dive[1] * c.s;
+    scene.style.transformOrigin = x + "px " + y + "px";
+    hero.classList.add("diving");
+    scene.getBoundingClientRect();
+    scene.classList.add("dive");   // fly the window to the centre of the screen while zooming in
+    scene.style.translate = (c.W / 2 - x) + "px " + (c.H / 2 - y) + "px"; scene.style.scale = "30";
+    var fade = document.createElement("div"); fade.className = "dive-fade";
+    fade.style.setProperty("--x", x + "px"); fade.style.setProperty("--y", y + "px");
+    document.body.appendChild(fade);
+    setTimeout(function () { fade.classList.add("dark"); }, 1800);
+    setTimeout(function () { fade.classList.add("light"); }, 2200);
+    setTimeout(function () { window.location.href = L.href; }, 2550);
+  }
   window.addEventListener("pageshow", function () {
+    document.querySelectorAll(".dive-fade").forEach(function (n) { n.remove(); });
+    var sc = document.querySelector(".scene"); if (sc) { sc.classList.remove("dive"); sc.style.translate = ""; sc.style.scale = ""; } hero.classList.remove("diving");
     document.querySelectorAll(".launch").forEach(function (n) { n.remove(); });
-    LANDMARKS.forEach(function (L) { if (L.el) L.el.classList.remove("open", "leaving", "on"); if (L.tag) L.tag.classList.remove("on"); });
+    LANDMARKS.forEach(function (L) { if (L.el) L.el.classList.remove("open", "leaving", "on", "spinning"); if (L.tag) L.tag.classList.remove("on"); });
   });
 
   // ------------------------------------------------------------ opener
@@ -236,12 +268,14 @@
     "  float m = texture2D(uMask, uv).r;",
     "  float depth = mix(0.3, 1.0, clamp((uv.y - 0.3) / 0.6, 0.0, 1.0));",
     "  vec2 q = uv * vec2(1.0, 1.8);",
-    "  float w1 = sin(q.y * 190.0 + uT * 1.6 + sin(q.x * 12.0 + uT * 0.4) * 2.0);",
-    "  float w2 = sin(q.y * 95.0 - uT * 1.0 + q.x * 24.0);",
-    "  float w3 = sin(q.x * 140.0 + q.y * 60.0 + uT * 2.2);",
-    "  vec2 d = vec2(w3 * 0.35 + w2 * 0.25, w1 * 0.6 + w2 * 0.4) * 0.0014 * depth * m * m;",
+    "  float sw = sin(q.y * 38.0 - uT * 1.3 + sin(q.x * 6.0 + uT * 0.35) * 2.5);",
+    "  float w1 = sin(q.y * 150.0 + uT * 2.0 + sin(q.x * 11.0 + uT * 0.5) * 2.4);",
+    "  float w2 = sin(q.y * 80.0 - uT * 1.4 + q.x * 22.0);",
+    "  float w3 = sin(q.x * 120.0 + q.y * 55.0 + uT * 2.6);",
+    "  vec2 d = (vec2(w3 * 0.35 + w2 * 0.3, w1 * 0.55 + w2 * 0.35) * 0.0026 + vec2(0.0, sw) * 0.0034) * depth * m * m;",
     "  vec3 c = texture2D(uImg, uv + d).rgb;",
-    "  c += pow(max(0.0, w1 * 0.5 + w3 * 0.5), 6.0) * 0.10 * m * depth * vec3(1.0, 0.92, 0.8);",
+    "  c *= 1.0 + sw * 0.045 * m * depth;",
+    "  c += pow(max(0.0, w1 * 0.5 + w3 * 0.5), 5.0) * 0.14 * m * depth * vec3(1.0, 0.92, 0.8);",
     "  gl_FragColor = vec4(c, 1.0);",
     "}"].join("\n");
   function river() {

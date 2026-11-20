@@ -32,13 +32,13 @@ a { color: inherit; }
 a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
 /* ---------------- hero ---------------- */
-.hero { position: relative; height: max(640px, 100svh); overflow: hidden; background: var(--night); color: var(--ink); isolation: isolate; }
+.hero { position: relative; height: max(640px, 100svh); overflow: hidden; background: var(--night) url("/assets/city-1600.jpg") 50% 50% / cover; color: var(--ink); isolation: isolate; }
 .city, .river { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
 .city { z-index: -4; }
 .river { z-index: -3; opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
 .gl .river { opacity: 1; }
 .hero::before { /* top and bottom shading so text stays readable */
-  content: ""; position: absolute; inset: 0; z-index: -2; pointer-events: none;
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background: linear-gradient(rgba(7,9,13,0.55), rgba(7,9,13,0) 16%), linear-gradient(rgba(7,9,13,0) 60%, rgba(7,9,13,0.45)); }
 
 /* opener veils: one per city, lifted phrase by phrase */
@@ -125,6 +125,22 @@ a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 .bridge.open .tb-leaf-l { transform: rotate(-78deg); filter: drop-shadow(-3px 8px 6px rgba(0,0,0,0.45)); }
 .bridge.open .tb-leaf-r { transform: rotate(78deg); filter: drop-shadow(3px 8px 6px rgba(0,0,0,0.45)); }
 
+/* camera dive into Galata */
+.scene { position: absolute; inset: 0; z-index: -1; }
+.scene.dive { transition: translate 1.5s cubic-bezier(.45,0,.2,1), scale 2.3s cubic-bezier(.6,0,.85,.35), filter 2.3s ease-in; filter: blur(1px); }
+.diving .tag, .diving .copy, .diving .topbar, .diving .skip { opacity: 0 !important; transition: opacity 0.4s ease !important; }
+.diving .landmark.on .lm-img { transform: none; filter: none; }
+.dive-fade { position: fixed; inset: 0; z-index: 1000; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at var(--x) var(--y), rgba(8,8,10,0.2), #08080a 30%); transition: opacity 0.45s ease; }
+.dive-fade.dark { opacity: 1; }
+.dive-fade.light { background: var(--paper); transition: background 0.35s ease; }
+
+/* London Eye spins up */
+.landmark.spinning .lm-img { animation: spin 1.5s cubic-bezier(.5,0,.75,0) forwards; transform-origin: 50% 50%; }
+@keyframes spin {
+  from { transform: scaleX(var(--k)) rotate(0deg) scaleX(calc(1 / var(--k))); filter: none; }
+  to { transform: scaleX(var(--k)) rotate(900deg) scaleX(calc(1 / var(--k))); filter: blur(0.6px) brightness(1.15) drop-shadow(0 0 18px rgba(255,214,150,0.9)); } }
+
 /* opening a product */
 .launch { position: fixed; z-index: 1000; overflow: hidden; border-radius: 6px;
   transition: left 0.6s cubic-bezier(.32,.72,0,1), top 0.6s cubic-bezier(.32,.72,0,1), width 0.6s cubic-bezier(.32,.72,0,1), height 0.6s cubic-bezier(.32,.72,0,1), border-radius 0.6s ease; }
@@ -168,10 +184,12 @@ footer { font-size: 13px; color: var(--muted); }
 <body>
 
 <header class="hero" aria-label="Istanbul, London and Los Angeles">
+  <div class="scene">
   <img class="city" src="/assets/city.jpg" srcset="/assets/city-1600.jpg 1600w, /assets/city.jpg 3000w" sizes="100vw"
        alt="One imagined city at golden hour: Istanbul's Galata Tower, mosques and Bosphorus Bridge on the left, London's Tower Bridge, Big Ben and the London Eye in the middle, and Griffith Observatory and downtown Los Angeles on the right, around one wide river">
   <canvas class="river" id="river" aria-hidden="true"></canvas>
   <div class="landmarks" id="landmarks"></div>
+  </div>
 
   <div class="veil v1" aria-hidden="true"></div>
   <div class="veil v2" aria-hidden="true"></div>
@@ -185,7 +203,7 @@ footer { font-size: 13px; color: var(--muted); }
   <div class="copy">
     <h1 class="l1"><span class="p1">Born in <em>Istanbul</em>.</span> <span class="p2">Blended in <em>London</em>.</span> <span class="p3">Building in <em>Los Angeles</em>.</span></h1>
     <p class="l2">I'm Barkın. Everything here started in one of these cities.</p>
-    <p class="hint">Click a landmark to open what I built there</p>
+    <p class="hint">Click a landmark to open a product</p>
     <nav class="pills" aria-label="Products">
       <a href="/dispatch/"><span>Istanbul</span>The Morning Dispatch</a>
       <a href="/sport/"><span>London</span>Dispatch Sport</a>
@@ -226,6 +244,15 @@ footer { font-size: 13px; color: var(--muted); }
         </div>
         <span class="tag-t">Data · Maps</span>
       </a>
+      <a class="project" href="/next/">
+        <span class="no">04</span>
+        <div>
+          <h3>Project 04</h3>
+          <p>The next one is in the works.</p>
+          <span class="status-t">Soon · London Eye</span>
+        </div>
+        <span class="tag-t">TBA</span>
+      </a>
     </div>
   </section>
 
@@ -239,6 +266,6 @@ footer { font-size: 13px; color: var(--muted); }
   <footer>Built with Claude. Hosted on GitHub Pages.</footer>
 </div>
 
-<script src="/assets/home.js?v=1795149214" defer></script>
+<script src="/assets/home.js?v=1795149752" defer></script>
 </body>
 </html>
