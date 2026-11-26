@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Morning Dispatch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=VT323&display=swap" rel="stylesheet">
+<style>
+/* Layout: a broadsheet front page. Masthead, market ticker, one lead story, then three desk columns that stack on phones. */
+:root {
+  --paper: #f2f3f0;
+  --ink: #15181d;
+  --muted: #5a616c;
+  --rule: #cdd1d6;
+  --accent: #1d47c9;
+  --card: #ffffff;
+  --up: #17734a;
+  --down: #b3261e;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #111317; --ink: #e8eaed; --muted: #9aa1ac; --rule: #2c3038;
+    --accent: #7d9cff; --card: #181b21; --up: #4cc38a; --down: #ff7b72;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #111317; --ink: #e8eaed; --muted: #9aa1ac; --rule: #2c3038;
+  --accent: #7d9cff; --card: #181b21; --up: #4cc38a; --down: #ff7b72;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 15px; line-height: 1.55;
+}
+a { color: inherit; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px 56px; }
+
+/* Masthead */
+.mast { border-bottom: 3px double var(--ink); padding: 28px 0 14px; display: grid; gap: 6px; text-align: center; }
+.mast h1 { font-family: var(--display); font-weight: 700; font-size: clamp(36px, 7vw, 64px); line-height: 1; margin: 0; letter-spacing: -0.01em; }
+.dateline { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; font-size: 12.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Ticker */
+.ticker { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--rule); }
+.tick { padding: 12px 14px; display: grid; gap: 2px; border-right: 1px solid var(--rule); }
+.tick:last-child { border-right: 0; }
+.tick .name { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.tick .val { font-family: var(--mono); font-size: 17px; font-variant-numeric: tabular-nums; }
+.tick .chg { font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; }
+.up { color: var(--up); } .down { color: var(--down); }
+.ticker-note { font-size: 12px; color: var(--muted); padding: 6px 0 0; }
+
+/* Lead */
+.lead { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; padding: 26px 0; border-bottom: 1px solid var(--rule); }
+.kicker { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 600; }
+.lead h2 { font-family: var(--display); font-size: clamp(28px, 4vw, 42px); line-height: 1.08; margin: 6px 0 12px; text-wrap: balance; }
+.lead p { margin: 0 0 10px; max-width: 62ch; }
+.facts { background: var(--card); border: 1px solid var(--rule); padding: 16px 18px; display: grid; gap: 10px; align-content: start; }
+.facts h3 { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+.fact { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dotted var(--rule); padding-bottom: 8px; }
+.fact:last-child { border-bottom: 0; padding-bottom: 0; }
+.fact span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+
+/* Desks */
+.desks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; padding-top: 22px; }
+.desk { padding: 0 22px; border-right: 1px solid var(--rule); display: grid; gap: 18px; align-content: start; }
+.desk:first-child { padding-left: 0; }
+.desk:last-child { border-right: 0; padding-right: 0; }
+.desk-head { border-top: 3px solid var(--ink); padding-top: 8px; display: flex; justify-content: space-between; align-items: baseline; }
+.desk-head h2 { font-family: var(--display); font-size: 24px; margin: 0; }
+.desk-head .count { font-size: 12px; color: var(--muted); }
+.sub { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 600; margin: 4px 0 -8px; }
+.item h3 { font-family: var(--display); font-size: 19px; line-height: 1.2; margin: 0 0 5px; text-wrap: balance; }
+.item p { margin: 0 0 5px; }
+.src { font-size: 12.5px; color: var(--muted); }
+.src a { color: var(--muted); }
+.item + .item { border-top: 1px solid var(--rule); padding-top: 16px; }
+
+/* Score and fixture tables */
+.scores { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.scores td { padding: 5px 0; border-bottom: 1px dotted var(--rule); vertical-align: top; }
+.scores td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; padding-left: 10px; }
+.scores tr:last-child td { border-bottom: 0; }
+.w { font-weight: 600; }
+
+/* Footer */
+footer { margin-top: 36px; border-top: 3px double var(--ink); padding-top: 14px; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+
+.lead.solo { grid-template-columns: 1fr; }
+.lg { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-left: 4px; }
+.table-block { display: grid; gap: 4px; }
+.tlabel { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.topnav { display: flex; justify-content: space-between; font-size: 13px; padding-top: 14px; color: var(--muted); }
+.topnav a { color: var(--muted); text-decoration: none; }
+.archive { list-style: none; padding: 0; display: grid; gap: 10px; font-family: var(--display); font-size: 20px; }
+.navr { display: flex; gap: 18px; }
+.ttx-link { font-family: "VT323", ui-monospace, monospace; font-size: 17px; background: #000; color: #ff0 !important; padding: 0 8px; }
+.topnav a:hover { text-decoration: underline; }
+
+@media (max-width: 900px) {
+  .lead { grid-template-columns: 1fr; }
+  .desks { grid-template-columns: 1fr; gap: 30px; }
+  .desk, .desk:first-child, .desk:last-child { padding: 0; border-right: 0; }
+}
+@media (max-width: 560px) {
+  .ticker { grid-template-columns: repeat(2, 1fr); }
+  .tick:nth-child(2) { border-right: 0; }
+  .tick:nth-child(-n+2) { border-bottom: 1px solid var(--rule); }
+}
+
+/* arrival animation after launching from the home screen */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  body { animation: enter 0.55s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes enter { from { opacity: 0; transform: translateY(16px) scale(0.985); } to { opacity: 1; transform: none; } }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="topnav"><a href="/">← Home</a><span class="navr"><a class="ttx-link" href="/sport/">Sport on P300 ▸</a><a href="/dispatch/archive/">Past editions</a></span></nav>
+<header class="mast">
+  <h1>The Morning Dispatch</h1>
+  <div class="dateline">
+    <span>Thursday, November 26, 2026</span>
+    <span>Edition No. 8</span>
+    <span>AI &amp; Tech · Finance</span>
+    <span>All times Pacific</span>
+  </div>
+</header>
+<section aria-label="Markets"><div class="ticker"><div class="tick"><span class="name">S&amp;P 500</span><span class="val">7,182.78</span><span class="chg down">−0.25%</span></div><div class="tick"><span class="name">Dow</span><span class="val">50,182.95</span><span class="chg up">+0.33%</span></div><div class="tick"><span class="name">Nasdaq</span><span class="val">23,585.80</span><span class="chg down">−0.62%</span></div><div class="tick"><span class="name">10-yr yield</span><span class="val">4.85%</span><span class="chg down">−1.14%</span></div></div><div class="ticker-note">Latest prices when this edition was built. Change is from the previous close.</div></section>
+
+<main class="desks">
+  <section class="desk" aria-labelledby="d-ai">
+    <div class="desk-head"><h2 id="d-ai">AI &amp; Tech</h2></div>
+<article class="item"><h3>S&amp;P considers Nvidia credit downgrade over governance and ‘key man’ risks</h3><p class="src"><a href="https://techcrunch.com/2026/11/25/sp-considers-nvidia-credit-downgrade-over-governance-and-key-man-risks/">TechCrunch AI</a></p></article>
+<article class="item"><h3>Jensen Huang deepfakes are the hot new AI slop</h3><p class="src"><a href="https://www.theverge.com/tech/1041222/jensen-huang-nvidia-scandal-deepfakes">The Verge AI</a></p></article>
+<article class="item"><h3>Backblaze explains why it&#x27;s sharing customer information with advertisers</h3><p class="src"><a href="https://arstechnica.com/information-technology/2026/11/backblaze-explains-why-its-sharing-customer-information-with-advertisers/">Ars Technica</a></p></article>
+<article class="item"><h3>AI is straining America’s open records systems</h3><p class="src"><a href="https://www.technologyreview.com/2026/11/25/1149702/ai-is-straining-americas-open-records-systems/">MIT Tech Review</a></p></article>
+<article class="item"><h3>OpenAI says heavy ChatGPT users may hit limits sooner as it merges Chat and Work</h3><p class="src"><a href="https://techcrunch.com/2026/11/25/openai-says-heavy-chatgpt-users-may-hit-limits-sooner-as-it-merges-chat-and-work/">TechCrunch AI</a></p></article>
+<article class="item"><h3>42 state AGs are trying to stop Character.AI from selling users’ chats</h3><p class="src"><a href="https://www.theverge.com/policy/1042620/character-ai-sale-state-ags-block-selling-users-chats">The Verge AI</a></p></article>
+  </section>
+  <section class="desk" aria-labelledby="d-fin">
+    <div class="desk-head"><h2 id="d-fin">Finance</h2></div>
+<article class="item"><h3>Semiconductor chips are the new oil. Here&#x27;s why</h3><p class="src"><a href="https://www.cnbc.com/2026/11/26/semiconductor-chips-are-the-new-oil-heres-why.html">CNBC Markets</a></p></article>
+<article class="item"><h3>Spain’s Pablo Hernández de Cos set to lead European Central Bank</h3><p class="src"><a href="https://www.cnbc.com/2026/11/26/pablo-hernandez-de-cos-ecb-president.html">CNBC Top News</a></p></article>
+<article class="item"><h3>This retired professor has reinvented himself — as a Taylor Swift scholar</h3><p class="src"><a href="https://www.marketwatch.com/story/this-retired-professor-has-reinvented-himself-as-a-taylor-swift-scholar-88456c8d?mod=mw_rss_topstories">MarketWatch</a></p></article>
+<article class="item"><h3>Nvidia&#x27;s billion-dollar board bet: Who&#x27;s protected as lawsuits mount?</h3><p class="src"><a href="https://www.cnbc.com/2026/11/25/nvidias-billion-dollar-board-bet-whos-protected-as-lawsuits-mount.html">CNBC Markets</a></p></article>
+<article class="item"><h3>What is ‘texture-maxxing’? The food trend putting crunch on the menu</h3><p class="src"><a href="https://www.cnbc.com/2026/11/26/texture-maxxing-food-trends-gen-z.html">CNBC Top News</a></p></article>
+  </section>
+</main>
+<footer>
+  <span>Headlines from the linked sources. Built 6:43 AM PT, Thu Nov 26.</span>
+  <span>A new edition every morning.</span>
+</footer>
+</div>
+</body>
+</html>
